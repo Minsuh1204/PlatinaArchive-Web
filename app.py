@@ -1,4 +1,3 @@
-from markdown import markdown
 import os
 
 from dotenv import load_dotenv
@@ -20,10 +19,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 @app.route("/")
 def homepage():
-    readme_loc = os.path.join(BASEDIR, os.path.pardir, "README.md")
-    with open(readme_loc, "r") as f:
-        readme_md = f.read()
-    return render_template("home.html", readme=markdown(readme_md))
+    return render_template("home.html")
 
 
 if __name__ == "__main__":
