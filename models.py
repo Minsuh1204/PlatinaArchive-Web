@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+from hashlib import sha256
 import os
-from hashlib import sha3_256
+import secrets
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, reconstructor
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # Load .env
-load_dotenv(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".env"))
-SALT = os.getenv("SALT")
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+load_dotenv()
 
 
 class Base(DeclarativeBase):
@@ -54,5 +56,28 @@ class Decoder(db.Model):
     __tablename__ = "Decoders"
 
     name: Mapped[str] = mapped_column("name", primary_key=True)
-    hashed_key: Mapped[str] = mapped_column("hashedKey")
+    hashed_secret: Mapped[str] = mapped_column("hashedSecret")
+    # The key will be stored in client as they first register/login
     hashed_pass: Mapped[str] = mapped_column("hashedPass")
+
+    def check_pass(self, password: str):
+        return check_password_hash(self.hashed_pass, password)
+
+    @staticmethod
+    def is_name_available(name: str):
+        return not Decoder.query.filter_by(name=name).one_or_none()
+
+    @classmethod
+    def register(cls, name: str, password: str) -> tuple[Decoder, str] | None:
+        if not cls.is_name_available(name):
+            return None
+
+        # API Key structure: name::secret
+        secret = secrets.token_urlsafe(64)
+        key = f"{name}::{secret}"
+        hashed_secret = sha256(secret.encode()).hexdigest()
+        hashed_pass = generate_password_hash(password)
+        decoder = cls(name=name, hashed_secret=hashed_secret, hashed_pass=hashed_pass)
+        db.session.add(decoder)
+        db.session.commit()
+        return decoder, key

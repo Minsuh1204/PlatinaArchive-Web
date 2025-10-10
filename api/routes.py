@@ -1,8 +1,8 @@
 import os
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
-from models import PlatinaPattern, PlatinaSong
+from models import Decoder, PlatinaPattern, PlatinaSong
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -44,3 +44,17 @@ def api_platina_patterns():
             }
         )
     return jsonify(patterns_json)
+
+
+@api_bp.route("/register", methods=["POST"])
+def register_decoder():
+    params = request.get_json()
+    name = params["name"]
+    password = params["password"]
+    result = Decoder.register(name, password)
+    if not result:
+        return "Name already taken", 400
+
+    decoder, key = result
+    success_json = {"name": decoder.name, "key": key}
+    return jsonify(success_json)
