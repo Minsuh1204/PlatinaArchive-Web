@@ -4,7 +4,7 @@ Flask-SQLAlchemy>=3.1.1
 Flask-JWT-Extended>=4.4.4
 
 # Database Driver
-PyMySQL>=1.0.3
+mysqlclient>=2.2.0
 
 # Utilities and Security
 python-dotenv>=1.0.0
