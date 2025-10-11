@@ -3,7 +3,7 @@ import os
 
 from flask import Blueprint, jsonify, request
 
-from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong
+from models import db, Decoder, DecodeResult, PlatinaPattern, PlatinaSong
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -61,44 +61,56 @@ def register_decoder():
     return jsonify(success_json)
 
 
-@api_bp.route("/decode", methods=["POST"])
-def decode_api():
+@api_bp.route("/update_archive", methods=["POST"])
+def update_archive():
     params = request.get_json()
     api_key = params.get("api_key")
-    song_id = int(params.get("song_id", 0))
-    line = int(params.get("line", 0))
+    song_id = params.get("song_id")
+    line = params.get("line")
     difficulty = params.get("difficulty")
-    level = int(params.get("level", 0))
-    judge = float(params.get("judge", 0))
-    score = int(params.get("score", 0))
-    patch = float(params.get("patch", 0))
+    level = params.get("level")
+    judge = params.get("judge")
+    score = params.get("score")
+    patch = params.get("patch")
+    is_full_combo = params.get("is_full_combo")
+    is_max_patch = params.get("is_max_patch")
 
     decoder = Decoder.load_by_key(api_key)
     if not decoder:
         msg = {"msg": "Invalid API key"}
         return jsonify(msg), 401
 
-    utc_now = datetime.now(timezone.utc)
-
-    is_updated = DecodeResult.update(
-        decoder.name, song_id, line, difficulty, level, judge, score, patch, utc_now
+    existing_archive: DecodeResult = DecodeResult.query.get(
+        (decoder.name, song_id, line, difficulty, level)
     )
-
-    if is_updated[0]:
-        msg = {
-            "old_judge": is_updated[1],
-            "old_score": is_updated[2],
-            "old_patch": is_updated[3],
-        }
-        return jsonify(msg), 200
+    utc_now = datetime.now(timezone.utc)
+    if existing_archive:
+        existing_archive.judge = judge
+        existing_archive.score = score
+        existing_archive.patch = patch
+        existing_archive.is_full_combo = is_full_combo
+        existing_archive.is_max_patch = is_max_patch
+        existing_archive.decoded_at = utc_now
+        db.session.commit()
 
     else:
-        msg = {
-            "best_judge": is_updated[1],
-            "best_score": is_updated[2],
-            "date_decoded": is_updated[3].isoformat(),
-        }
-        return jsonify(msg), 304
+        new_archive = DecodeResult(
+            decoder=decoder.name,
+            song_id=song_id,
+            line=line,
+            difficulty=difficulty,
+            level=level,
+            judge=judge,
+            score=score,
+            patch=patch,
+            decoded_at=utc_now,
+            is_full_combo=is_full_combo,
+            is_max_patch=is_max_patch,
+        )
+        db.session.add(new_archive)
+        db.session.commit()
+
+    return jsonify({"msg": "success"}), 200
 
 
 @api_bp.route("/get_archive", methods=["POST"])
