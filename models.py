@@ -136,6 +136,9 @@ class DecodeResult(db.Model):
                 patch=patch,
                 date_decoded=date_decoded,
             )
+            old_judge = 0.0
+            old_score = 0
+            old_patch = 0.0
             db.session.add(new_record)
             db_updated = True
 
