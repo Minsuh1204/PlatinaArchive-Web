@@ -96,6 +96,6 @@ def decode_api():
         msg = {
             "best_judge": is_updated[1],
             "best_score": is_updated[2],
-            "date_decoded": is_updated[3],
+            "date_decoded": is_updated[3].isoformat(),
         }
         return jsonify(msg), 304
