@@ -106,7 +106,7 @@ class DecodeResult(db.Model):
     judge: Mapped[float] = mapped_column("judge")
     score: Mapped[int] = mapped_column("score")
     patch: Mapped[float] = mapped_column("patch")
-    date_decoded: Mapped[datetime] = mapped_column("dateDecoded")
+    decoded_at: Mapped[datetime] = mapped_column("decodedAt")
     is_full_combo: Mapped[bool] = mapped_column("isFullCombo")
     is_max_patch: Mapped[bool] = mapped_column("isMaxPatch")
 
@@ -124,7 +124,7 @@ class DecodeResult(db.Model):
         judge: float,
         score: int,
         patch: float,
-        date_decoded: datetime,
+        decoded_at: datetime,
     ) -> tuple[bool, float, int, datetime] | tuple[bool, float, int, float]:
         db_updated = False
         existing_record = DecodeResult.query.get(
@@ -140,7 +140,7 @@ class DecodeResult(db.Model):
                 judge=judge,
                 score=score,
                 patch=patch,
-                date_decoded=date_decoded,
+                decoded_at=decoded_at,
             )
             old_judge = 0.0
             old_score = 0
@@ -159,7 +159,7 @@ class DecodeResult(db.Model):
             existing_record.judge = judge
             existing_record.score = score
             existing_record.patch = patch
-            existing_record.date_decoded = date_decoded
+            existing_record.decoded_at = decoded_at
             db_updated = True
 
         if db_updated:
@@ -172,5 +172,5 @@ class DecodeResult(db.Model):
                 False,
                 existing_record.judge,
                 existing_record.score,
-                existing_record.date_decoded,
+                existing_record.decoded_at,
             )

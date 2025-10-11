@@ -109,5 +109,22 @@ def get_archive():
     if not decoder:
         msg = {"msg": "Invalid API key"}
         return jsonify(msg), 401
-    archive = DecodeResult.get_archive(decoder.name)
-    return jsonify(archive)
+    archive: list[DecodeResult] = DecodeResult.get_archive(decoder.name)
+    json_archive = []
+    for arc in archive:
+        json_archive.append(
+            {
+                "decoder": arc.decoder,
+                "song_id": arc.song_id,
+                "line": arc.line,
+                "difficulty": arc.difficulty,
+                "level": arc.level,
+                "judge": arc.judge,
+                "score": arc.score,
+                "patch": arc.patch,
+                "decoded_at": arc.decoded_at,
+                "is_full_combo": arc.is_full_combo,
+                "is_max_patch": arc.is_max_patch,
+            }
+        )
+    return jsonify(json_archive)
