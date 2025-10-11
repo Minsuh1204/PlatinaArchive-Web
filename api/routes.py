@@ -1,8 +1,9 @@
+from datetime import datetime, timezone
 import os
 
 from flask import Blueprint, jsonify, request
 
-from models import Decoder, PlatinaPattern, PlatinaSong
+from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -49,8 +50,8 @@ def api_platina_patterns():
 @api_bp.route("/register", methods=["POST"])
 def register_decoder():
     params = request.get_json()
-    name = params["name"]
-    password = params["password"]
+    name = params.get("name", "")
+    password = params.get("password", "")
     result = Decoder.register(name, password)
     if not result:
         return "Name already taken", 400
@@ -58,3 +59,43 @@ def register_decoder():
     decoder, key = result
     success_json = {"name": decoder.name, "key": key}
     return jsonify(success_json)
+
+
+@api_bp.route("/decode", methods=["POST"])
+def decode_api():
+    params = request.get_json()
+    api_key = params.get("api_key")
+    song_id = int(params.get("song_id", 0))
+    line = int(params.get("line", 0))
+    difficulty = params.get("difficulty")
+    level = int(params.get("level", 0))
+    judge = float(params.get("judge", 0))
+    score = int(params.get("score", 0))
+    patch = float(params.get("patch", 0))
+
+    decoder = Decoder.load_by_key(api_key)
+    if not decoder:
+        msg = {"msg": "Invalid API key"}
+        return jsonify(msg), 401
+
+    utc_now = datetime.now(timezone.utc)
+
+    is_updated = DecodeResult.update(
+        decoder.name, song_id, line, difficulty, level, judge, score, patch, utc_now
+    )
+
+    if is_updated[0]:
+        msg = {
+            "old_judge": is_updated[1],
+            "old_score": is_updated[2],
+            "old_patch": is_updated[3],
+        }
+        return jsonify(msg), 200
+
+    else:
+        msg = {
+            "best_judge": is_updated[1],
+            "best_score": is_updated[2],
+            "date_decoded": is_updated[3],
+        }
+        return jsonify(msg), 304
