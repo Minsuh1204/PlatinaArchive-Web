@@ -16,6 +16,7 @@ app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("LAB_DB_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 3600
 app.config["JWT_SECRET_KEY"] = os.getenv("FLASK_SECRET")
 app.register_blueprint(api_bp)
 
