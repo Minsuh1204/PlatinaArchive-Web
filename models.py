@@ -107,6 +107,8 @@ class DecodeResult(db.Model):
     score: Mapped[int] = mapped_column("score")
     patch: Mapped[float] = mapped_column("patch")
     date_decoded: Mapped[datetime] = mapped_column("dateDecoded")
+    is_full_combo: Mapped[bool] = mapped_column("isFullCombo")
+    is_max_patch: Mapped[bool] = mapped_column("isMaxPatch")
 
     @staticmethod
     def get_archive(decoder: str):
