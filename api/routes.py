@@ -99,3 +99,15 @@ def decode_api():
             "date_decoded": is_updated[3].isoformat(),
         }
         return jsonify(msg), 304
+
+
+@api_bp.route("/get_archive", methods=["POST"])
+def get_archive():
+    params = request.get_json()
+    api_key = params.get("api_key")
+    decoder = Decoder.load_by_key(api_key)
+    if not decoder:
+        msg = {"msg": "Invalid API key"}
+        return jsonify(msg), 401
+    archive = DecodeResult.get_archive(decoder.name)
+    return jsonify(archive)

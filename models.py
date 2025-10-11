@@ -109,6 +109,10 @@ class DecodeResult(db.Model):
     date_decoded: Mapped[datetime] = mapped_column("dateDecoded")
 
     @staticmethod
+    def get_archive(decoder: str):
+        return DecodeResult.query.filter_by(decoder=decoder).all()
+
+    @staticmethod
     def update(
         decoder: str,
         song_id: int,
