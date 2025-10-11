@@ -122,7 +122,7 @@ def get_archive():
                 "judge": arc.judge,
                 "score": arc.score,
                 "patch": arc.patch,
-                "decoded_at": arc.decoded_at,
+                "decoded_at": arc.decoded_at.isoformat(),
                 "is_full_combo": arc.is_full_combo,
                 "is_max_patch": arc.is_max_patch,
             }
