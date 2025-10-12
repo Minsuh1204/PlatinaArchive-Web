@@ -1,18 +1,42 @@
 from datetime import datetime, timezone
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 
 from models import db, Decoder, DecodeResult, PlatinaPattern, PlatinaSong
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
-TEMPLATES = os.path.join(BASEDIR, "templates")
-api_bp = Blueprint("api", __name__, url_prefix="/api", template_folder=TEMPLATES)
+api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
+
+SONGS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
+PATTERNS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
 
 
-@api_bp.route("/platina_songs", methods=["POST"])
+def check_cache_headers(db_last_modified: datetime):
+    db_last_modified_str = db_last_modified.isoformat()
+    if_modified_since = request.headers.get("If-Modified-Since")
+
+    if if_modified_since:
+        try:
+            client_date = datetime.fromisoformat(if_modified_since)
+            if client_date >= db_last_modified:
+                response = make_response("", 304)
+                response.headers["Last-Modified"] = db_last_modified_str
+                return response
+        except ValueError:
+            pass
+
+    return None
+
+
+@api_bp_v1.route("/platina_songs")
 def api_platina_songs():
+    # cache check
+    cache_response = check_cache_headers(SONGS_DB_LAST_UPDATED)
+    if cache_response:
+        return cache_response
+
     songs = PlatinaSong.get_all()
     songs_json = []
     for song in songs:
@@ -27,11 +51,18 @@ def api_platina_songs():
                 "plusPHash": song.plus_phash,
             }
         )
-    return jsonify(songs_json)
+    response = jsonify(songs_json)
+    last_modified_str = SONGS_DB_LAST_UPDATED.isoformat()
+    response.headers["Last-Modified"] = last_modified_str
+    return response
 
 
-@api_bp.route("/platina_patterns", methods=["POST"])
+@api_bp_v1.route("/platina_patterns")
 def api_platina_patterns():
+    # cache check
+    cache_response = check_cache_headers(PATTERNS_DB_LAST_UPDATED)
+    if cache_response:
+        return cache_response
     patterns = PlatinaPattern.get_all()
     patterns_json = []
     for pattern in patterns:
@@ -44,10 +75,13 @@ def api_platina_patterns():
                 "designer": pattern.designer,
             }
         )
-    return jsonify(patterns_json)
+    response = jsonify(patterns_json)
+    last_modified_str = PATTERNS_DB_LAST_UPDATED.isoformat()
+    response.headers["Last-Modified"] = last_modified_str
+    return response
 
 
-@api_bp.route("/register", methods=["POST"])
+@api_bp_v1.route("/register", methods=["POST"])
 def register_decoder():
     params = request.get_json()
     name = params.get("name", "")
@@ -61,7 +95,7 @@ def register_decoder():
     return jsonify(success_json)
 
 
-@api_bp.route("/update_archive", methods=["POST"])
+@api_bp_v1.route("/update_archive", methods=["POST"])
 def update_archive():
     params = request.get_json()
     api_key = params.get("api_key")
@@ -113,7 +147,7 @@ def update_archive():
     return jsonify({"msg": "success"}), 200
 
 
-@api_bp.route("/get_archive", methods=["POST"])
+@api_bp_v1.route("/get_archive", methods=["POST"])
 def get_archive():
     params = request.get_json()
     api_key = params.get("api_key")
