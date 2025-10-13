@@ -5,13 +5,13 @@ from flask import Flask, render_template
 from flask_jwt_extended import JWTManager
 
 from api.routes import api_bp_v1
-from models import db, Decoder
+from models import Decoder, db
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 0, 1)
+VERSION = (1, 0, 2)
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True

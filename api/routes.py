@@ -1,10 +1,9 @@
-from datetime import datetime, timezone
 import os
+from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, make_response, request
 
-from models import db, Decoder, DecodeResult, PlatinaPattern, PlatinaSong
-
+from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -88,7 +87,7 @@ def register_decoder():
     password = params.get("password", "")
     result = Decoder.register(name, password)
     if not result:
-        return "Name already taken", 400
+        return jsonify({"msg": "Name already taken"}), 400
 
     decoder, key = result
     success_json = {"name": decoder.name, "key": key}
@@ -114,37 +113,65 @@ def update_archive():
         msg = {"msg": "Invalid API key"}
         return jsonify(msg), 401
 
+    song_obj: PlatinaSong = PlatinaSong.query.get((song_id))
+    if not song_obj:
+        return jsonify({"msg": "Unknown song ID"}), 404
+    if not line in (4, 6):
+        return jsonify({"msg": "Invalid line value"}), 400
+    if not difficulty in ("EASY", "HARD", "OVER", "PLUS"):
+        return jsonify({"msg": "Invalid difficulty value"}), 400
+    available_levels = song_obj.get_available_levels(line, difficulty)
+    if not level in available_levels:
+        return jsonify({"msg": "Invalid level value"}), 400
+    if (
+        not (isinstance(judge, float) or isinstance(judge, int))
+        or judge < 0
+        or judge > 100
+    ):
+        return jsonify({"msg": "Invalid judge value"}), 400
+    if not isinstance(score, int) or score < 0:
+        return jsonify({"msg": "Invalid score value"}), 400
+    if not (isinstance(patch, float) or isinstance(patch, int)) or patch < 0:
+        return jsonify({"msg": "Invalid P.A.T.C.H. value"}), 400
+    if not isinstance(is_full_combo, bool):
+        return jsonify({"msg": "Invalid is_full_combo value"}), 400
+    if not isinstance(is_max_patch, bool):
+        return jsonify({"msg": "Invalid is_max_patch value"}), 400
+
     existing_archive: DecodeResult = DecodeResult.query.get(
         (decoder.name, song_id, line, difficulty, level)
     )
     utc_now = datetime.now(timezone.utc)
-    if existing_archive:
-        existing_archive.judge = judge
-        existing_archive.score = score
-        existing_archive.patch = patch
-        existing_archive.is_full_combo = is_full_combo
-        existing_archive.is_max_patch = is_max_patch
-        existing_archive.decoded_at = utc_now
-        db.session.commit()
+    try:
+        if existing_archive:
+            existing_archive.judge = judge
+            existing_archive.score = score
+            existing_archive.patch = patch
+            existing_archive.is_full_combo = is_full_combo
+            existing_archive.is_max_patch = is_max_patch
+            existing_archive.decoded_at = utc_now
+        else:
+            new_archive = DecodeResult(
+                decoder=decoder.name,
+                song_id=song_id,
+                line=line,
+                difficulty=difficulty,
+                level=level,
+                judge=judge,
+                score=score,
+                patch=patch,
+                decoded_at=utc_now,
+                is_full_combo=is_full_combo,
+                is_max_patch=is_max_patch,
+            )
+            db.session.add(new_archive)
 
-    else:
-        new_archive = DecodeResult(
-            decoder=decoder.name,
-            song_id=song_id,
-            line=line,
-            difficulty=difficulty,
-            level=level,
-            judge=judge,
-            score=score,
-            patch=patch,
-            decoded_at=utc_now,
-            is_full_combo=is_full_combo,
-            is_max_patch=is_max_patch,
-        )
-        db.session.add(new_archive)
         db.session.commit()
+        return jsonify({"msg": "success"}), 200
 
-    return jsonify({"msg": "success"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": f"Unknown database error: {e}"}), 500
 
 
 @api_bp_v1.route("/get_archive", methods=["POST"])
