@@ -12,7 +12,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 1, 4)
+VERSION = (1, 1, 5)
 ALLOWED_REDIRECT_PATHS: set[str] = {
     "/my"
 }
@@ -74,7 +74,7 @@ def login():
         response = make_response(redirect(next_url) if is_url_safe(next_url) else redirect("/"))
         set_access_cookies(response, access_token)
         return response
-    flash("로그인 실패", "error")
+    flash("로그인 실패", "danger")
     return render_template("login.html")
 
 @app.route("/my")
