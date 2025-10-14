@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, flash, make_response
-from flask_jwt_extended import JWTManager, create_access_token, set_access_cookies, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, set_access_cookies, jwt_required, current_user
 
 from api.routes import api_bp_v1
 from models import Decoder, db
@@ -80,8 +80,7 @@ def login():
 @app.route("/my")
 @jwt_required()
 def my():
-    current_decoder: Decoder = get_jwt_identity()
-    return f"Hello, {current_decoder.name}"
+    return f"Hello, {current_user.name}"
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
