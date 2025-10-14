@@ -51,9 +51,18 @@
                         <a href="/client">
                             <button type="button" class="btn btn-secondary">Client</button>
                         </a>
-                        <a href="/archive">
-                            <button type="button" class="btn btn-primary">Archive</button>
-                        </a>
+                        {% if is_logged_in %}
+                        	<a href="/archive">
+                                <button type="button" class="btn btn-primary">Archive</button>
+                            </a>
+                            <a href="/logout">
+                                <button type="button" class="btn btn-danger">Logout</button>
+                            </a>
+                        {% else %}
+                            <a href="/login">
+                                <button type="button" class="btn btn-primary">Login</button>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
