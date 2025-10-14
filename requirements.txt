@@ -5,6 +5,7 @@ Flask-JWT-Extended>=4.4.4
 
 # Database Driver
 mysqlclient>=2.2.0
+redis>=5.0.0
 
 # Utilities and Security
 python-dotenv>=1.0.0
