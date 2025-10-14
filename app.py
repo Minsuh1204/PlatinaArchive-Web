@@ -12,7 +12,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 1, 1)
+VERSION = (1, 1, 2)
 ALLOWED_REDIRECT_PATHS: set[str] = {
     "/my"
 }
@@ -52,7 +52,7 @@ def user_identity_lookup(decoder: Decoder):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return Decoder.query.filter_by(name=identity).one_or_none()
+    return Decoder.query.get((identity))
 
 
 @app.route("/")
@@ -69,7 +69,7 @@ def login():
 
     decoder: Decoder = Decoder.query.get((name))
     if decoder and decoder.check_pass(password):
-        access_token = create_access_token(identity=name)
+        access_token = create_access_token(identity=decoder)
         response = make_response(redirect(next_url) if is_url_safe(next_url) else redirect("/"))
         set_access_cookies(response, access_token)
         return response
