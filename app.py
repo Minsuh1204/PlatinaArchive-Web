@@ -56,6 +56,7 @@ def is_url_safe(url: str) -> bool:
 
 
 @app.context_processor
+@jwt_required(optional=True)
 def inject_global_variables():
     decoder_name = get_jwt_identity()
     if decoder_name is None:
