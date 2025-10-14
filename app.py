@@ -116,6 +116,7 @@ def login():
 def logout():
     jti = get_jwt()["jti"]
     jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
+    return redirect("/")
 
 
 if __name__ == "__main__":
