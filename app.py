@@ -10,6 +10,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
     set_access_cookies,
+    unset_jwt_cookies,
 )
 import redis
 
@@ -116,7 +117,9 @@ def login():
 def logout():
     jti = get_jwt()["jti"]
     jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
-    return redirect("/")
+    response = make_response(redirect("/"))
+    unset_jwt_cookies(response)
+    return response
 
 
 if __name__ == "__main__":
