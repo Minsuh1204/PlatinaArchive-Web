@@ -78,7 +78,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/my")
-@jwt_required
+@jwt_required()
 def my():
     current_decoder: Decoder = get_jwt_identity()
     return f"Hello, {current_decoder.name}"
