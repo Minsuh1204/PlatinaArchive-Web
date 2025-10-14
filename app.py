@@ -12,7 +12,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 1, 0)
+VERSION = (1, 1, 1)
 ALLOWED_REDIRECT_PATHS: set[str] = {
     "/my"
 }
@@ -37,6 +37,12 @@ jwt = JWTManager(app)
 def is_url_safe(url: str) -> bool:
     return url in ALLOWED_REDIRECT_PATHS
 
+@app.context_processor
+def inject_global_variables():
+    return dict(
+        version=VERSION,
+    )
+
 
 @jwt.user_identity_loader
 def user_identity_lookup(decoder: Decoder):
@@ -51,7 +57,7 @@ def user_lookup_callback(_jwt_header, jwt_data):
 
 @app.route("/")
 def homepage():
-    return render_template("home.html", version=VERSION)
+    return render_template("home.html")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
