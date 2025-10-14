@@ -3,15 +3,6 @@
 	PLATiNA::ARCHiVE Login
 {% endblock %}
 {% block content %}
-    {% with messages = get_flashed_messages(with_categories=True) %}
-  {% if messages %}
-    <div class=flashes>
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
 	<div class="mb-3">
         <form method="post" action="/login" enctype="application/x-www-form-urlencoded">
             <label class="form-label" for="name">Name</label>

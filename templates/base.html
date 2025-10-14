@@ -30,8 +30,8 @@
     </style>
 </head>
 
-<body class="bg-dark">
-    <div class="top-div bg-dark">
+<body>
+    <div class="top-div">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-auto logo text-decoration-none">
@@ -59,11 +59,20 @@
             </div>
         </div>
     </div>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
     {% block content %}
     {% endblock %}
 
-    <footer class="bg-dark text-white pt-4 pb-2">
+    <footer class="pt-4 pb-2">
         <div class="text-center p-3">
             ※ 본 사이트는 게임 <a href="https://platinalab.net/" style="text-decoration: none;">PLATiNA :: Lab</a>의 팬사이트이며, 사이트
             내 사용된 모든 게임 컨텐츠(이미지, 문구 등)의
