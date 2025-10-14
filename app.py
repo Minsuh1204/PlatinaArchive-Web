@@ -12,7 +12,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 1, 2)
+VERSION = (1, 1, 3)
 ALLOWED_REDIRECT_PATHS: set[str] = {
     "/my"
 }
