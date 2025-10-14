@@ -18,13 +18,14 @@ ALLOWED_REDIRECT_PATHS: set[str] = {
 }
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET")
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("LAB_DB_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 3600
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
-app.config["JWT_SECRET_KEY"] = os.getenv("FLASK_SECRET")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_COOKIE_SECURE"] = True
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
