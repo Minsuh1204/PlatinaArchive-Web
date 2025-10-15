@@ -23,7 +23,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 2, 0)
+VERSION = (1, 2, 1)
 ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive"}
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"

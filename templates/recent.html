@@ -18,6 +18,22 @@
     <tbody>
         {% for result in recent_results %}
         {% set is_initial = result.old_judge == 0 and result.old_score == 0 %}
+        {% set judge_str = "{judge}%" | formate(result.judge) %}
+        {% set old_judge_str = "{judge}%" | formate(result.judge) %}
+        {% if result.is_max_patch %}
+            {% set judge_str = judge_str ~ " [MAX P.A.T.C.H.]" %}
+        {% elif result.judge == 100 %}
+            {% set judge_str = judge_str ~ " [PERFECT DECODE]" %}
+        {% elif result.is_full_combo %}
+            {% set judge_str = judge_str ~ " [FULL COMBO]" %}
+        {% endif %}
+        {% if result.old_is_max_patch %}
+            {% set old_judge_str = old_judge_str ~ " [MAX P.A.T.C.H.]" %}
+        {% elif result.old_judge == 100 %}
+            {% set old_judge_str = old_judge_str ~ " [PERFECT DECODE]" %}
+        {% elif result.old_is_full_combo %}
+            {% set old_judge_str = old_judge_str ~ " [FULL COMBO]" %}
+        {% endif %}
         <tr>
             <td style="width: 100px;">
                 {% if result.difficulty == "PLUS" %}
@@ -36,20 +52,20 @@
             </td>
             {% if is_initial %}
             <td>
-                N/A -> {{ result.judge }}%
+                N/A -> {{ judge_str }}
             </td>
             <td>
-                N/A -> {{ result.score }}
+                N/A -> {{ "{:,}" | format(result.score) }}
             </td>
             <td>
                 N/A -> {{ result.patch }}
             </td>
             {% else %}
             <td>
-                {{ result.old_judge }}% -> {{ result.judge }}%
+                {{ old_judge_str }}% -> {{ judge_str }}%
             </td>
             <td>
-                {{ result.old_score }} -> {{ result.score }}
+                {{ "{:,}" | format(result.old_score) }} -> {{ "{:,}" | format(result.score) }}
             </td>
             <td>
                 {{ result.old_patch }} -> {{ result.patch }}
