@@ -18,8 +18,8 @@
     <tbody>
         {% for result in recent_results %}
         {% set is_initial = result.old_judge == 0 and result.old_score == 0 %}
-        {% set judge_str = "{judge}%" | formate(result.judge) %}
-        {% set old_judge_str = "{judge}%" | formate(result.judge) %}
+        {% set judge_str = "{judge}%" | format(result.judge) %}
+        {% set old_judge_str = "{judge}%" | format(result.judge) %}
         {% if result.is_max_patch %}
             {% set judge_str = judge_str ~ " [MAX P.A.T.C.H.]" %}
         {% elif result.judge == 100 %}
