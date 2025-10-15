@@ -55,7 +55,7 @@
                 N/A -> {{ judge_str }}
             </td>
             <td>
-                N/A -> {{ "{:,}" | format(result.score) }}
+                N/A -> {{ "{0:,}" | format(result.score) }}
             </td>
             <td>
                 N/A -> {{ result.patch }}
@@ -65,7 +65,7 @@
                 {{ old_judge_str }}% -> {{ judge_str }}%
             </td>
             <td>
-                {{ "{:,}" | format(result.old_score) }} -> {{ "{:,}" | format(result.score) }}
+                {{ "{0:,}" | format(result.old_score) }} -> {{ "{0:,}" | format(result.score) }}
             </td>
             <td>
                 {{ result.old_patch }} -> {{ result.patch }}
