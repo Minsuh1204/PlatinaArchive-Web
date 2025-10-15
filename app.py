@@ -6,6 +6,7 @@ from flask import Flask, flash, make_response, redirect, render_template, reques
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
+    current_user,
     get_jwt,
     get_jwt_identity,
     jwt_required,
@@ -13,17 +14,19 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 import redis
+from sqlalchemy import select, desc
 
 from api.routes import api_bp_v1
-from models import Decoder, db
+from models import Decoder, db, DecodeResult
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 1, 6)
+VERSION = (1, 2, 0)
 ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive"}
 ACCESS_EXPIRES = timedelta(days=30)
+TITLE = "PLATiNA-ARCHiVE"
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET")
@@ -64,9 +67,11 @@ def inject_global_variables():
         decoder = None
         is_logged_in = False
     else:
-        decoder = Decoder.query.get(decoder_name)
+        decoder = db.session.get(Decoder, decoder_name)
         is_logged_in = True
-    return dict(version=VERSION, decoder=decoder, is_logged_in=is_logged_in)
+    return dict(
+        version=VERSION, decoder=decoder, is_logged_in=is_logged_in, title=TITLE
+    )
 
 
 @jwt.token_in_blocklist_loader
@@ -100,7 +105,7 @@ def login():
     name = request.form.get("name")
     password = request.form.get("password")
 
-    decoder: Decoder = Decoder.query.get(name)
+    decoder: Decoder = db.session.get(Decoder, name)
     if decoder and decoder.check_pass(password):
         access_token = create_access_token(identity=decoder)
         response = make_response(
@@ -120,6 +125,22 @@ def logout():
     response = make_response(redirect("/"))
     unset_jwt_cookies(response)
     return response
+
+
+@app.route("/recent")
+@jwt_required()
+def recent():
+    recent_50_results: list[DecodeResult] = (
+        db.session.execute(
+            select(DecodeResult)
+            .filter_by(decoder=current_user.name)
+            .order_by(desc(DecodeResult.decoded_at))
+            .limit(50)
+        )
+        .scalars()
+        .all()
+    )
+    return render_template("recent.html", recent_results=recent_50_results)
 
 
 if __name__ == "__main__":

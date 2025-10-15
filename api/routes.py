@@ -138,40 +138,22 @@ def update_archive():
     if not isinstance(is_max_patch, bool):
         return jsonify({"msg": "Invalid is_max_patch value"}), 400
 
-    existing_archive: DecodeResult = DecodeResult.query.get(
-        (decoder.name, song_id, line, difficulty, level)
+    update_success = DecodeResult.update_or_make(
+        decoder.name,
+        song_id,
+        line,
+        difficulty,
+        level,
+        judge,
+        score,
+        patch,
+        is_full_combo,
+        is_max_patch,
     )
-    utc_now = datetime.now(timezone.utc)
-    try:
-        if existing_archive:
-            existing_archive.judge = judge
-            existing_archive.score = score
-            existing_archive.patch = patch
-            existing_archive.is_full_combo = is_full_combo
-            existing_archive.is_max_patch = is_max_patch
-            existing_archive.decoded_at = utc_now
-        else:
-            new_archive = DecodeResult(
-                decoder=decoder.name,
-                song_id=song_id,
-                line=line,
-                difficulty=difficulty,
-                level=level,
-                judge=judge,
-                score=score,
-                patch=patch,
-                decoded_at=utc_now,
-                is_full_combo=is_full_combo,
-                is_max_patch=is_max_patch,
-            )
-            db.session.add(new_archive)
-
-        db.session.commit()
+    if update_success:
         return jsonify({"msg": "success"}), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"msg": f"Unknown database error: {e}"}), 500
+    else:
+        return jsonify({"msg": "failed"}), 500
 
 
 @api_bp_v1.route("/get_archive", methods=["POST"])

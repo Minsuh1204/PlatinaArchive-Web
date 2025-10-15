@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}
+최근기록 | {{ title }}
+{% endblock %}
+
+{% block content %}
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">재킷</th>
+            <th scope="col">제목</th>
+            <th scope="col">난이도</th>
+            <th scope="col">판정</th>
+            <th scope="col">점수</th>
+            <th scope="col">P.A.T.C.H.</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in recent_results %}
+        {% set is_initial = result.old_judge == 0 and result.old_score == 0 %}
+        <tr>
+            <td style="width: 100px;">
+                {% if result.difficulty == "PLUS" %}
+                <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png" alt="Album Jacket"
+                    class="img-fluid" style="max-height: 80px; width: auto;">
+                {% else %}
+                <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
+                    class="img-fluid" style="max-height: 80px; width: auto;">
+                {% endif %}
+            </td>
+            <td>
+                {{ result.song.title }}
+            </td>
+            <td>
+                {{ result.line }}L {{ result.difficulty }} Lv.{{ result.level }}
+            </td>
+            {% if is_initial %}
+            <td>
+                N/A -> {{ result.judge }}%
+            </td>
+            <td>
+                N/A -> {{ result.score }}
+            </td>
+            <td>
+                N/A -> {{ result.patch }}
+            </td>
+            {% else %}
+            <td>
+                {{ result.old_judge }}% -> {{ result.judge }}%
+            </td>
+            <td>
+                {{ result.old_score }} -> {{ result.score }}
+            </td>
+            <td>
+                {{ result.old_patch }} -> {{ result.patch }}
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

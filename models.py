@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import os
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from hashlib import sha256
 from typing import Literal
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -16,8 +16,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
 
-Lines = Literal[4, 6]
-Difficulties = Literal["EASY", "HARD", "OVER", "PLUS"]
+type Lines = Literal[4, 6]
+type Difficulties = Literal["EASY", "HARD", "OVER", "PLUS"]
 
 
 class Base(DeclarativeBase):
@@ -88,7 +88,7 @@ class Decoder(db.Model):
 
     @staticmethod
     def is_name_available(name: str):
-        return not Decoder.query.filter_by(name=name).one_or_none()
+        return not db.session.get(Decoder, name)
 
     @classmethod
     def register(cls, name: str, password: str) -> tuple[Decoder, str] | None:
@@ -108,7 +108,7 @@ class Decoder(db.Model):
     @staticmethod
     def load_by_key(key: str) -> Decoder | None:
         name, given_secret = key.split("::")
-        decoder = Decoder.query.filter_by(name=name).one_or_none()
+        decoder = db.session.get(Decoder, name)
         if not decoder:
             return None
         if sha256(given_secret.encode()).hexdigest() == decoder.hashed_secret:
@@ -135,10 +135,78 @@ class DecodeResult(db.Model):
     decoded_at: Mapped[datetime] = mapped_column("decodedAt")
     is_full_combo: Mapped[bool] = mapped_column("isFullCombo")
     is_max_patch: Mapped[bool] = mapped_column("isMaxPatch")
+    old_judge: Mapped[float] = mapped_column("oldJudge")
+    old_score: Mapped[int] = mapped_column("oldScore")
+    old_patch: Mapped[float] = mapped_column("oldPatch")
+    old_is_full_combo: Mapped[bool] = mapped_column("oldIsFullCombo")
+    old_is_max_patch: Mapped[bool] = mapped_column("oldIsMaxPatch")
     # relations
     decoder_obj: Mapped[Decoder] = relationship(back_populates="decode_results")
     song: Mapped[PlatinaSong] = relationship(back_populates="decode_results")
 
     @staticmethod
     def get_archive(decoder: str):
-        return DecodeResult.query.filter_by(decoder=decoder).all()
+        return (
+            db.session.execute(select(DecodeResult).filter_by(decoder=decoder))
+            .scalars()
+            .all()
+        )
+
+    @staticmethod
+    def update_or_make(
+        decoder: str,
+        song_id: int,
+        line: Lines,
+        difficulty: Difficulties,
+        level: int,
+        new_judge: float,
+        new_score: int,
+        new_patch: float,
+        new_is_full_combo: bool,
+        new_is_max_patch: bool,
+    ):
+        existing_archive = db.session.get(
+            DecodeResult, (decoder, song_id, line, difficulty, level)
+        )
+        utc_now = datetime.now(timezone.utc)
+        if not existing_archive:
+            # There is no existing archive
+            new_archive = DecodeResult(
+                decoder=decoder,
+                song_id=song_id,
+                line=line,
+                difficulty=difficulty,
+                level=level,
+                judge=new_judge,
+                score=new_score,
+                patch=new_patch,
+                decoded_at=utc_now,
+                is_full_combo=new_is_full_combo,
+                is_max_patch=new_is_max_patch,
+                old_judge=0.0,
+                old_score=0,
+                old_patch=0.0,
+                old_is_full_combo=False,
+                old_is_max_patch=False,
+            )
+            db.session.add(new_archive)
+        else:
+            # Existing archive needs update
+            existing_archive.old_judge = existing_archive.judge
+            existing_archive.old_score = existing_archive.score
+            existing_archive.old_patch = existing_archive.patch
+            existing_archive.old_is_full_combo = existing_archive.is_full_combo
+            existing_archive.old_is_max_patch = existing_archive.is_max_patch
+            existing_archive.decoded_at = utc_now
+            existing_archive.judge = new_judge
+            existing_archive.score = new_score
+            existing_archive.patch = new_patch
+            existing_archive.is_full_combo = new_is_full_combo
+            existing_archive.is_max_patch = new_is_max_patch
+            db.session.add(existing_archive)
+        try:
+            db.session.commit()
+            return True
+        except Exception:
+            db.session.rollback()
+            return False
