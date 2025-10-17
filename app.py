@@ -89,11 +89,18 @@ def user_lookup_callback(_jwt_header, jwt_data):
     return Decoder.query.get(identity)
 
 
-@jwt.expired_token_loader
 @jwt.invalid_token_loader
+def handle_invalid_token(reason):
+    flash(f"로그인 쿠키가 유효하지 않습니다. 다시 로그인해주세요. ({reason})", "danger")
+    response = make_response(redirect(url_for("login")))
+    unset_jwt_cookies(response)
+    return response
+
+
+@jwt.expired_token_loader
 @jwt.revoked_token_loader
-def handle_invalid_token(_jwt_header, jwt_data):
-    flash("로그인 쿠키가 잘못되었습니다. 다시 로그인해주세요.", "danger")
+def handle_expired_token(_jwt_header, jwt_data):
+    flash(f"로그인 쿠키가 만료되었습니다. 다시 로그인해주세요.", "info")
     response = make_response(redirect(url_for("login")))
     unset_jwt_cookies(response)
     return response
