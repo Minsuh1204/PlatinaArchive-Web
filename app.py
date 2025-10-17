@@ -22,7 +22,6 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 from sqlalchemy import desc, select
-from urllib.parse import quote
 
 from api.routes import api_bp_v1
 from models import Decoder, DecodeResult, db
@@ -31,8 +30,14 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 2, 2)
+VERSION = (1, 2, 3)
 ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive", "/recent"}
+ENDPOINTS_MAP = dict[str, str] = {
+    "/": "homepage",
+    "/login": "login",
+    "/logout": "logout",
+    "/recent": "recent",
+}
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"
 
@@ -102,7 +107,8 @@ def handle_invalid_token(reason):
 @jwt.revoked_token_loader
 def handle_expired_token(_jwt_header, jwt_data):
     flash(f"로그인 쿠키가 만료되었습니다. 다시 로그인해주세요.", "info")
-    response = make_response(redirect(url_for("login")))
+    endpoint = ENDPOINTS_MAP.get(request.path, "homepage")
+    response = make_response(redirect(url_for("login", next=endpoint)))
     unset_jwt_cookies(response)
     return response
 
@@ -110,8 +116,8 @@ def handle_expired_token(_jwt_header, jwt_data):
 @jwt.unauthorized_loader
 def handle_not_logged_in(reason):
     flash("로그인이 필요합니다.", "warning")
-    next_url = request.path
-    return redirect(url_for("login", next=quote(next_url)))
+    endpoint = ENDPOINTS_MAP.get(request.path, "homepage")
+    return redirect(url_for("login", next=endpoint))
 
 
 @app.route("/")
@@ -125,7 +131,7 @@ def homepage():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-    next_url = request.args.get("next", "/")
+    next_endpoint = request.args.get("next", "homepage")
     name = request.form.get("name")
     password = request.form.get("password")
 
@@ -133,7 +139,13 @@ def login():
     if decoder and decoder.check_pass(password):
         access_token = create_access_token(identity=decoder)
         response = make_response(
-            redirect(next_url) if is_url_safe(next_url) else redirect("/")
+            redirect(
+                url_for(
+                    next_endpoint
+                    if next_endpoint in ENDPOINTS_MAP.values()
+                    else "homepage"
+                )
+            )
         )
         set_access_cookies(response, access_token)
         flash(f"환영합니다, {decoder.name}!", "success")
