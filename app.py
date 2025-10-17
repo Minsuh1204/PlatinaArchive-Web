@@ -1,5 +1,6 @@
 import os
 from datetime import timedelta
+from typing import Dict, Set
 
 import redis
 from dotenv import load_dotenv
@@ -31,8 +32,8 @@ os.chdir(BASEDIR)
 load_dotenv()
 
 VERSION = (1, 2, 3)
-ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive", "/recent"}
-ENDPOINTS_MAP = dict[str, str] = {
+ALLOWED_REDIRECT_PATHS: Set[str] = {"/my", "/archive", "/recent"}
+ENDPOINTS_MAP = Dict[str, str] = {
     "/": "homepage",
     "/login": "login",
     "/logout": "logout",
