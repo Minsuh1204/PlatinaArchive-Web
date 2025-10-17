@@ -31,7 +31,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 2, 3)
+VERSION = (1, 2, 4)
 ALLOWED_REDIRECT_PATHS: Set[str] = {"/my", "/archive", "/recent"}
 ENDPOINTS_MAP: Dict[str, str] = {
     "/": "homepage",
@@ -67,10 +67,6 @@ jwt_redis_blocklist = redis.StrictRedis(
     username=os.getenv("REDIS_USERNAME"),
     password=os.getenv("REDIS_PASS"),
 )
-
-
-def is_url_safe(url: str) -> bool:
-    return url in ALLOWED_REDIRECT_PATHS
 
 
 @app.context_processor
@@ -131,7 +127,9 @@ def homepage():
 @jwt_required(optional=True)
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template(
+            "login.html", next_endpoint=request.args.get("next", "homepage")
+        )
     next_endpoint = request.args.get("next", "homepage")
     name = request.form.get("name")
     password = request.form.get("password")

@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 	<div class="mb-3">
-        <form method="post" action="/login" enctype="application/x-www-form-urlencoded">
+        <form method="post" action="{{ url_for('login', next=next_endpoint) }}" enctype="application/x-www-form-urlencoded">
             <label class="form-label" for="name">이름</label>
             <input class="form-control" type="text" id="name" name="name" placeholder="Name" autocomplete="username">
             <br>
