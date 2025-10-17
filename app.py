@@ -22,6 +22,7 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 from sqlalchemy import desc, select
+from urllib.parse import quote
 
 from api.routes import api_bp_v1
 from models import Decoder, DecodeResult, db
@@ -110,7 +111,7 @@ def handle_expired_token(_jwt_header, jwt_data):
 def handle_not_logged_in(reason):
     flash("로그인이 필요합니다.", "warning")
     next_url = request.path
-    return redirect(url_for("login", next=next_url))
+    return redirect(url_for("login", next=quote(next_url)))
 
 
 @app.route("/")
