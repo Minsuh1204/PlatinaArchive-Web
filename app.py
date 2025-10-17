@@ -2,7 +2,15 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
-from flask import Flask, flash, make_response, redirect, render_template, request
+from flask import (
+    Flask,
+    flash,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+)
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -24,7 +32,7 @@ os.chdir(BASEDIR)
 load_dotenv()
 
 VERSION = (1, 2, 1)
-ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive"}
+ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive", "/recent"}
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"
 
@@ -90,6 +98,14 @@ def user_identity_lookup(decoder: Decoder):
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return Decoder.query.get(identity)
+
+
+@jwt.expired_token_loader
+@jwt.invalid_token_loader
+@jwt.revoked_token_loader
+@jwt.token_in_blocklist_loader
+def handle_invalid_token(_jwt_header, jwt_data):
+    return jsonify(jwt_data)
 
 
 @app.route("/")
