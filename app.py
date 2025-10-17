@@ -33,7 +33,7 @@ load_dotenv()
 
 VERSION = (1, 2, 3)
 ALLOWED_REDIRECT_PATHS: Set[str] = {"/my", "/archive", "/recent"}
-ENDPOINTS_MAP = Dict[str, str] = {
+ENDPOINTS_MAP: Dict[str, str] = {
     "/": "homepage",
     "/login": "login",
     "/logout": "logout",
