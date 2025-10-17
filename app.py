@@ -1,37 +1,36 @@
 import os
 from datetime import timedelta
 
+import redis
 from dotenv import load_dotenv
 from flask import (
     Flask,
     flash,
-    jsonify,
     make_response,
     redirect,
     render_template,
     request,
+    url_for,
 )
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
     current_user,
     get_jwt,
-    get_jwt_identity,
     jwt_required,
     set_access_cookies,
     unset_jwt_cookies,
 )
-import redis
-from sqlalchemy import select, desc
+from sqlalchemy import desc, select
 
 from api.routes import api_bp_v1
-from models import Decoder, db, DecodeResult
+from models import Decoder, DecodeResult, db
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 2, 1)
+VERSION = (1, 2, 2)
 ALLOWED_REDIRECT_PATHS: set[str] = {"/my", "/archive", "/recent"}
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"
@@ -52,7 +51,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 app.register_blueprint(api_bp_v1)
 
 db.init_app(app)
-jwt = JWTManager(app)
+jwt = JWTManager(app, add_context_processor=True)  # We can use current_user in jinja!!
 
 jwt_redis_blocklist = redis.StrictRedis(
     host=os.getenv("REDIS_HOST"),
@@ -68,18 +67,8 @@ def is_url_safe(url: str) -> bool:
 
 
 @app.context_processor
-@jwt_required(optional=True)
 def inject_global_variables():
-    decoder_name = get_jwt_identity()
-    if decoder_name is None:
-        decoder = None
-        is_logged_in = False
-    else:
-        decoder = db.session.get(Decoder, decoder_name)
-        is_logged_in = True
-    return dict(
-        version=VERSION, decoder=decoder, is_logged_in=is_logged_in, title=TITLE
-    )
+    return dict(version=VERSION, title=TITLE)
 
 
 @jwt.token_in_blocklist_loader
@@ -103,9 +92,18 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @jwt.expired_token_loader
 @jwt.invalid_token_loader
 @jwt.revoked_token_loader
-@jwt.token_in_blocklist_loader
 def handle_invalid_token(_jwt_header, jwt_data):
-    return jsonify(jwt_data)
+    flash("로그인 쿠키가 잘못되었습니다. 다시 로그인해주세요.", "danger")
+    response = make_response(redirect(url_for("login")))
+    unset_jwt_cookies(response)
+    return response
+
+
+@jwt.unauthorized_loader
+def handle_not_logged_in(reason):
+    flash("로그인이 필요합니다.", "warning")
+    next_url = request.path
+    return redirect(url_for("login", next=next_url))
 
 
 @app.route("/")
@@ -128,6 +126,7 @@ def login():
             redirect(next_url) if is_url_safe(next_url) else redirect("/")
         )
         set_access_cookies(response, access_token)
+        flash(f"환영합니다, {decoder.name}!", "success")
         return response
     flash("로그인 실패", "danger")
     return render_template("login.html")
@@ -140,6 +139,7 @@ def logout():
     jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
     response = make_response(redirect("/"))
     unset_jwt_cookies(response)
+    flash("성공적으로 로그아웃 되었습니다.", "info")
     return response
 
 
