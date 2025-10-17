@@ -107,11 +107,13 @@ def handle_not_logged_in(reason):
 
 
 @app.route("/")
+@jwt_required(optional=False)
 def homepage():
     return render_template("home.html")
 
 
 @app.route("/login", methods=["POST", "GET"])
+@jwt_required(optional=False)
 def login():
     if request.method == "GET":
         return render_template("login.html")
