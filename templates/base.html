@@ -49,20 +49,20 @@
 
                 <div class="col-auto">
                     <div class="d-flex gap-2" role="group">
+                        {% if current_user %}
+                        <a href="/recent">
+                            <button type="button" class="btn btn-primary">최근기록</button>
+                        </a>
                         <a href="/archive">
                             <button type="button" class="btn btn-secondary">성과표</button>
                         </a>
-                        {% if current_user %}
-                        	<a href="/recent">
-                                <button type="button" class="btn btn-primary">최근기록</button>
-                            </a>
-                            <a href="/logout">
-                                <button type="button" class="btn btn-danger">로그아웃</button>
-                            </a>
+                        <a href="/logout">
+                            <button type="button" class="btn btn-danger">로그아웃</button>
+                        </a>
                         {% else %}
-                            <a href="/login">
-                                <button type="button" class="btn btn-primary">로그인</button>
-                            </a>
+                        <a href="/login">
+                            <button type="button" class="btn btn-primary">로그인</button>
+                        </a>
                         {% endif %}
                     </div>
                 </div>
@@ -70,13 +70,13 @@
         </div>
     </div>
     {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <div class=flashes>
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
+    {% if messages %}
+    <div class=flashes>
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endwith %}
 
     {% block content %}
