@@ -4,8 +4,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="m-3">
-    <div class="card card-4l-bg text-white">
+<div class="container my-5">
+    <h2 class="text-center mb-4">{{ current_user.name }}님의 성과표</h2>
+    <div class="card card-4l-bg text-white mb-4">
         <h3 class="card-title text-center">4L</h3>
         <div class="card-body">
             <p class="card-text">Total Max P.A.T.C.H. : {{ status_4['max_patch_patterns'] }} / {{
@@ -31,13 +32,13 @@
             </div>
             <p class="card-text">Total Clear : {{ status_4['cleared_patterns'] }} / {{ status_4['total_patterns'] }}</p>
             <div class="progress" role="progressbar">
-                <div class="progress-bar bg-info-emphasis"
+                <div class="progress-bar bg-info"
                     style="width: {{ status_4['cleared_patterns'] / status_4['total_patterns'] * 100 | round }}%;">
                 </div>
             </div>
         </div>
     </div>
-    <div class="card card-4l-plus-bg text-white">
+    <div class="card card-4l-plus-bg text-white mb-4">
         <h3 class="card-title text-center">4+L</h3>
         <div class="card-body">
             <p class="card-text">Total Max P.A.T.C.H. : {{ status_4_plus['max_patch_patterns'] }} / {{
@@ -64,13 +65,13 @@
             <p class="card-text">Total Clear : {{ status_4_plus['cleared_patterns'] }} / {{
                 status_4_plus['total_patterns'] }}</p>
             <div class="progress" role="progressbar">
-                <div class="progress-bar bg-info-emphasis"
+                <div class="progress-bar bg-info"
                     style="width: {{ status_4_plus['cleared_patterns'] / status_4_plus['total_patterns'] * 100 | round }}%;">
                 </div>
             </div>
         </div>
     </div>
-    <div class="card card-6l-bg text-white">
+    <div class="card card-6l-bg text-white mb-4">
         <h3 class="card-title text-center">6L</h3>
         <div class="card-body">
             <p class="card-text">Total Max P.A.T.C.H. : {{ status_6['max_patch_patterns'] }} / {{
@@ -96,13 +97,13 @@
             </div>
             <p class="card-text">Total Clear : {{ status_6['cleared_patterns'] }} / {{ status_6['total_patterns'] }}</p>
             <div class="progress" role="progressbar">
-                <div class="progress-bar bg-info-emphasis"
+                <div class="progress-bar bg-info"
                     style="width: {{ status_6['cleared_patterns'] / status_6['total_patterns'] * 100 | round }}%;">
                 </div>
             </div>
         </div>
     </div>
-    <div class="card card-6l-plus-bg text-white">
+    <div class="card card-6l-plus-bg text-white mb-4">
         <h3 class="card-title text-center">6+L</h3>
         <div class="card-body">
             <p class="card-text">Total Max P.A.T.C.H. : {{ status_6_plus['max_patch_patterns'] }} / {{
@@ -129,7 +130,7 @@
             <p class="card-text">Total Clear : {{ status_6_plus['cleared_patterns'] }} / {{
                 status_6_plus['total_patterns'] }}</p>
             <div class="progress" role="progressbar">
-                <div class="progress-bar bg-info-emphasis"
+                <div class="progress-bar bg-info"
                     style="width: {{ status_6_plus['cleared_patterns'] / status_6_plus['total_patterns'] * 100 | round }}%;">
                 </div>
             </div>
