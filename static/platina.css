@@ -2,6 +2,8 @@
     --platina-4l: #26C795;
     --platina-6l: #7E72FA;
     --platina-max-patch: #C86FFE;
+    --platina-perfect: #8E1EBF;
+    --platina-full-combo: #359885;
 }
 
 .card-4l-bg {
@@ -10,4 +12,12 @@
 
 .platina-max-patch-bg {
     background-color: var(--platina-max-patch);
+}
+
+.platina-perfect-bg {
+    background-color: var(--platina-perfect);
+}
+
+.platina-full-combo-bg {
+    background-color: var(--platina-full-combo);
 }

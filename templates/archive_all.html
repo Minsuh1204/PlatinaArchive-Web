@@ -4,13 +4,32 @@
 {% endblock %}
 
 {% block content %}
-<div class="card card-4l-bg">
-    <h3 class="card-title text-white">4L</h3>
-    <div class="card-body">
-        <div class="progress" role="progressbar">
-            <div class="progress-bar platina-max-patch-bg"
-                style="width: {{ status_4['max_patch_patterns'] / status_4['total_patterns'] | round }}%;"></div>
+<div class="container mb-4 my-5">
+    <div class="card card-4l-bg">
+        <h3 class="card-title text-white">4L</h3>
+        <div class="card-body">
+            <p class="card-text">Total Max P.A.T.C.H. : {{ status_4['max_patch_patterns'] }}</p>
+            <div class="progress" role="progressbar">
+                <div class="progress-bar platina-max-patch-bg"
+                    style="width: {{ status_4['max_patch_patterns'] / status_4['total_patterns'] | round }}%;"></div>
+            </div>
+            <p class="card-text">Total Perfect Decode : status_4['perfect_decode_patterns']</p>
+            <div class="progress" role="progressbar">
+                <div class="progress-bar platina-perfect-bg"
+                    style="width: {{ status_4['perfect_decode_patterns'] / status_4['total_patterns'] | round }}%;">
+                </div>
+            </div>
+            <p class="card-text">Total Full Combo : status_4['full_combo_patterns']</p>
+            <div class="progress" role="progressbar">
+                <div class="progress-bar platina-full-combo-bg"
+                    style="width: {{ status_4['full_combo_patterns'] / status_4['total_patterns'] | round }}%;"></div>
+            </div>
+            <p class="card-text">Total Clear : status_4['cleared_patterns']</p>
+            <div class="progress" role="progressbar">
+                <div class="progress-bar bg-info-emphasis"
+                    style="width: {{ status_4['cleared_patterns'] / status_4['total_patterns'] | round }}%;"></div>
+            </div>
         </div>
     </div>
-</div>
+</div>  
 {% endblock %}
