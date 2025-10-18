@@ -4,11 +4,11 @@ import os
 import secrets
 from datetime import datetime, timezone
 from hashlib import sha256
-from typing import Literal
+from typing import Literal, TypedDict
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, select
+from sqlalchemy import ForeignKey, select, desc, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -25,6 +25,17 @@ class Base(DeclarativeBase):
 
 
 db = SQLAlchemy(model_class=Base)
+
+
+class DecoderStatus(TypedDict):
+    decoder: str
+    line: Lines
+    is_plus: bool
+    total_patterns: int
+    cleared_patterns: int
+    full_combo_patterns: int
+    perfect_decode_patterns: int
+    max_patch_patterns: int
 
 
 class PlatinaSong(db.Model):
@@ -82,6 +93,78 @@ class Decoder(db.Model):
     decode_results: Mapped[list[DecodeResult]] = relationship(
         back_populates="decoder_obj"
     )
+
+    def get_top_50_patch_results(
+        self, line: Lines, is_plus: bool
+    ) -> list[DecodeResult]:
+        """Get top 50 plays by P.A.T.C.H. value for a specific line and PLUS mode."""
+        # Determine difficulty filter
+        difficulty_filter = (
+            DecodeResult.difficulty == "PLUS"
+            if is_plus
+            else DecodeResult.difficulty != "PLUS"
+        )
+
+        return (
+            db.session.execute(
+                select(DecodeResult)
+                .filter(
+                    DecodeResult.decoder == self.name,
+                    DecodeResult.line == line,
+                    difficulty_filter,
+                )
+                .order_by(desc(DecodeResult.patch))
+                .limit(50)
+            )
+            .scalars()
+            .all()
+        )
+
+    def get_status(self, line: Lines, is_plus: bool) -> DecoderStatus:
+        """
+        Get number of cleared patterns and total patterns \n
+        for a specific line and PLUS mode.
+        """
+        result_difficulty_filter = (
+            DecodeResult.difficulty == "PLUS"
+            if is_plus
+            else DecodeResult.difficulty != "PLUS"
+        )
+        pattern_difficulty_filter = (
+            PlatinaPattern.difficulty == "PLUS"
+            if is_plus
+            else PlatinaPattern.difficulty != "PLUS"
+        )
+        cleared_patterns_select = (
+            select(func.count())
+            .select_from(DecodeResult)
+            .filter(DecodeResult.line == line, result_difficulty_filter)
+        )
+        total_patterns = db.session.scalar(
+            select(func.count())
+            .select_from(PlatinaPattern)
+            .filter(PlatinaPattern.line == line, pattern_difficulty_filter)
+        )
+        cleared_patterns = db.session.scalar(cleared_patterns_select)
+        full_combo_patterns = db.session.scalar(
+            cleared_patterns_select.filter(DecodeResult.is_full_combo)
+        )
+        perfect_decode_patterns = db.session.scalar(
+            cleared_patterns_select.filter(DecodeResult.judge == 100)
+        )
+        max_patch_patterns = db.session.scalar(
+            cleared_patterns_select.filter(DecodeResult.is_max_patch)
+        )
+        return {
+            "decoder": str(self.name),
+            "line": line,
+            "is_plus": is_plus,
+            "total_patterns": total_patterns,
+            "cleared_patterns": cleared_patterns,
+            "full_combo_patterns": full_combo_patterns,
+            "perfect_decode_patterns": perfect_decode_patterns,
+            "max_patch_patterns": max_patch_patterns,
+        }
 
     def check_pass(self, password: str):
         return check_password_hash(self.hashed_pass, password)

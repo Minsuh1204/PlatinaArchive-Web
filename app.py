@@ -38,6 +38,7 @@ ENDPOINTS_MAP: Dict[str, str] = {
     "/login": "login",
     "/logout": "logout",
     "/recent": "recent",
+    "/archive": "decoder_archive",
 }
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"
@@ -178,6 +179,16 @@ def recent():
         .all()
     )
     return render_template("recent.html", recent_results=recent_50_results)
+
+
+@app.route("/archive")
+@jwt_required()
+def decoder_archive():
+    decoder: Decoder = current_user
+    status_4 = decoder.get_status(4, False)
+    status_4_plus = decoder.get_status(4, True)
+    status_6 = decoder.get_status(6, False)
+    status_6_plus = decoder.get_status(6, True)
 
 
 if __name__ == "__main__":
