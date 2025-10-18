@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}
-	Archive | {{ title }}
+{{ current_user.name }}님의 성과표 | {{ title }}
 {% endblock %}
 
 {% block content %}
-    <h3></h3>
+<div class="card card-4l-bg">
+    <h3 class="card-title text-white">4L</h3>
+    <div class="card-body">
+        <div class="progress" role="progressbar">
+            <div class="progress-bar platina-max-patch-bg"
+                style="width: {{ status_4['max_patch_patterns'] / status_4['total_patterns'] | round }}%;"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}

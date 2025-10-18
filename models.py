@@ -8,7 +8,7 @@ from typing import Literal, TypedDict
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, select, desc, func
+from sqlalchemy import ForeignKey, desc, func, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 

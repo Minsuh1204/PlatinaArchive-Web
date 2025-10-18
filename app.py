@@ -31,7 +31,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 2, 4)
+VERSION = (1, 3, 0)
 ALLOWED_REDIRECT_PATHS: Set[str] = {"/my", "/archive", "/recent"}
 ENDPOINTS_MAP: Dict[str, str] = {
     "/": "homepage",
@@ -43,7 +43,7 @@ ENDPOINTS_MAP: Dict[str, str] = {
 ACCESS_EXPIRES = timedelta(days=30)
 TITLE = "PLATiNA-ARCHiVE"
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 app.secret_key = os.getenv("FLASK_SECRET")
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
@@ -189,6 +189,13 @@ def decoder_archive():
     status_4_plus = decoder.get_status(4, True)
     status_6 = decoder.get_status(6, False)
     status_6_plus = decoder.get_status(6, True)
+    return render_template(
+        "archive_all.html",
+        status_4=status_4,
+        status_4_plus=status_4_plus,
+        status_6=status_6,
+        status_6_plus=status_6_plus,
+    )
 
 
 if __name__ == "__main__":

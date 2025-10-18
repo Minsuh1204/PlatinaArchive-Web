@@ -1,0 +1,13 @@
+:root {
+    --platina-4l: #26C795;
+    --platina-6l: #7E72FA;
+    --platina-max-patch: #C86FFE;
+}
+
+.card-4l-bg {
+    background-color: var(--platina-4l);
+}
+
+.platina-max-patch-bg {
+    background-color: var(--platina-max-patch);
+}
