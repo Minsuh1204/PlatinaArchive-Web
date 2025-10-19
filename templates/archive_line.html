@@ -21,12 +21,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% set size = results | length %}
-                    {% for i in range(1, size) %}
-                    {% set result = results[i] %}
+                    {% for result in results %}
                     <tr>
                         <td>
-                            {{ i }}
+                            {{ loop.index + 1 }}
                         </td>
                         <td style="width: 100px;">
                             {% if result.difficulty == "PLUS" %}
