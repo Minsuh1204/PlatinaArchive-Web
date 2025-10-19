@@ -40,11 +40,3 @@
 .platina-full-combo-bg {
     background-color: var(--platina-full-combo);
 }
-
-#platina-archive-logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--platina-core);
-    text-decoration: none;
-
-}
