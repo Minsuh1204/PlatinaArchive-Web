@@ -7,49 +7,53 @@
 <container class="my-5">
     <h3 class="text-center mb-4">{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50</h3>
     <h4 class="text-center mb-4">{{ emblem }}</h4>
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">순위</th>
-                <th scope="col">재킷</th>
-                <th scope="col">제목</th>
-                <th scope="col">레벨</th>
-                <th scope="col">판정</th>
-                <th scope="col">P.A.T.C.H.</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set size = results | length %}
-            {% for i in range(size) %}
-            {% set result = results[i] %}
-            <tr>
-                <td>
-                    {{ i }}
-                </td>
-                <td style="width: 100px;">
-                    {% if result.difficulty == "PLUS" %}
-                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png" alt="Album Jacket"
-                        class="img-fluid" style="max-height: 80px; width: auto;">
-                    {% else %}
-                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
-                        class="img-fluid" style="max-height: 80px; width: auto;">
-                    {% endif %}
-                </td>
-            </tr>
-            <td>
-                {{ result.song.title }}
-            </td>
-            <td>
-                Lv.{{ result.level }}
-            </td>
-            <td>
-                {{ result.judge }}%
-            </td>
-            <td>
-                {{ result.patch }}
-            </td>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">순위</th>
+                        <th scope="col">재킷</th>
+                        <th scope="col">제목</th>
+                        <th scope="col">레벨</th>
+                        <th scope="col">판정</th>
+                        <th scope="col">P.A.T.C.H.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set size = results | length %}
+                    {% for i in range(size) %}
+                    {% set result = results[i] %}
+                    <tr>
+                        <td>
+                            {{ i }}
+                        </td>
+                        <td style="width: 100px;">
+                            {% if result.difficulty == "PLUS" %}
+                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png"
+                                alt="Album Jacket" class="img-fluid" style="max-height: 80px; width: auto;">
+                            {% else %}
+                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
+                                class="img-fluid" style="max-height: 80px; width: auto;">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ result.song.title }}
+                        </td>
+                        <td>
+                            Lv.{{ result.level }}
+                        </td>
+                        <td>
+                            {{ result.judge }}%
+                        </td>
+                        <td>
+                            {{ result.patch }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </container>
 {% endblock %}

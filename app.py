@@ -254,9 +254,7 @@ def get_archive_by_line(line: str):
     )
     emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
     return render_template(
-        "archive_line.html",
-        results=top_50_patch_results,
-        emblem=emblem,
+        "archive_line.html", results=top_50_patch_results, emblem=emblem, line=line
     )
 
 
