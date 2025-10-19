@@ -1,6 +1,5 @@
 import os
 from datetime import timedelta
-from typing import Dict, Set
 
 import redis
 from dotenv import load_dotenv
@@ -32,9 +31,8 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 3, 0)
-ALLOWED_REDIRECT_PATHS: Set[str] = {"/my", "/archive", "/recent"}
-ENDPOINTS_MAP: Dict[str, str] = {
+VERSION = (1, 3, 1)
+ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
     "/logout": "logout",
@@ -128,6 +126,7 @@ def homepage():
 @app.route("/favicon.ico")
 @jwt_required(optional=True)
 def favicon():
+    # Image from: https://platinalab.net/characters
     return send_file("./static/favicon.ico")
 
 
@@ -196,12 +195,47 @@ def decoder_archive():
     status_4_plus = decoder.get_status(4, True)
     status_6 = decoder.get_status(6, False)
     status_6_plus = decoder.get_status(6, True)
+    overall_total_patterns = (
+        status_4["total_patterns"]
+        + status_4_plus["total_patterns"]
+        + status_6["total_patterns"]
+        + status_6_plus["total_patterns"]
+    )
+    overall_cleared_patterns = (
+        status_4["cleared_patterns"]
+        + status_4_plus["cleared_patterns"]
+        + status_6["cleared_patterns"]
+        + status_6_plus["cleared_patterns"]
+    )
+    overall_full_combo = (
+        status_4["full_combo_patterns"]
+        + status_4_plus["full_combo_patterns"]
+        + status_6["full_combo_patterns"]
+        + status_6_plus["full_combo_patterns"]
+    )
+    overall_perfect_decode = (
+        status_4["perfect_decode_patterns"]
+        + status_4_plus["perfect_decode_patterns"]
+        + status_6["perfect_decode_patterns"]
+        + status_6_plus["perfect_decode_patterns"]
+    )
+    overall_max_patch = (
+        status_4["max_patch_patterns"]
+        + status_4_plus["max_patch_patterns"]
+        + status_6["max_patch_patterns"]
+        + status_6_plus["max_patch_patterns"]
+    )
     return render_template(
         "archive_all.html",
         status_4=status_4,
         status_4_plus=status_4_plus,
         status_6=status_6,
         status_6_plus=status_6_plus,
+        overall_total_patterns=overall_total_patterns,
+        overall_cleared_patterns=overall_cleared_patterns,
+        overall_full_combo=overall_full_combo,
+        overall_perfect_decode=overall_perfect_decode,
+        overall_max_patch=overall_max_patch,
     )
 
 

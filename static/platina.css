@@ -1,4 +1,5 @@
 :root {
+    --platina-core: #5867FF;
     --platina-4l: #26C795;
     --platina-4l-plus: #368C91;
     --platina-6l: #7E72FA;
@@ -6,6 +7,10 @@
     --platina-max-patch: #C86FFE;
     --platina-perfect: #8E1EBF;
     --platina-full-combo: #359885;
+}
+
+.card-overall-bg {
+    background-color: var(--platina-core);
 }
 
 .card-4l-bg {
@@ -34,4 +39,12 @@
 
 .platina-full-combo-bg {
     background-color: var(--platina-full-combo);
+}
+
+.platina-archive-logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--platina-core) !important;
+    text-decoration: none;
+
 }

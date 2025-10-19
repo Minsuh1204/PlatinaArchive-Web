@@ -122,7 +122,7 @@ class Decoder(db.Model):
 
     def get_status(self, line: Lines, is_plus: bool) -> DecoderStatus:
         """
-        Get number of cleared patterns and total patterns \n
+        Get number of patterns cleared, full combo, perfect and max patch and total patterns \n
         for a specific line and PLUS mode.
         """
         result_difficulty_filter = (
