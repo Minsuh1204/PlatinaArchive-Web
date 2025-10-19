@@ -43,7 +43,10 @@
                 </div>
             </div>
             <div class="card card-4l-bg text-white mb-4">
-                <h3 class="card-title text-center">4L</h3>
+                <h3 class="card-title text-center">
+                    <a class='text-decoration-none text-white'
+                        href="{{ url_for('get_archive_by_line', line='4L') }}">4L</a>
+                </h3>
                 <div class="card-body">
                     <p class="card-text">Total Max P.A.T.C.H. : {{ status_4['max_patch_patterns'] }} / {{
                         status_4['total_patterns'] }}</p>
@@ -76,7 +79,10 @@
                 </div>
             </div>
             <div class="card card-4l-plus-bg text-white mb-4">
-                <h3 class="card-title text-center">4L+</h3>
+                <h3 class="card-title text-center">
+                    <a class='text-decoration-none text-white'
+                        href="{{ url_for('get_archive_by_line', line='4L+') }}">4L+</a>
+                </h3>
                 <div class="card-body">
                     <p class="card-text">Total Max P.A.T.C.H. : {{ status_4_plus['max_patch_patterns'] }} / {{
                         status_4_plus['total_patterns'] }}</p>
@@ -109,7 +115,10 @@
                 </div>
             </div>
             <div class="card card-6l-bg text-white mb-4">
-                <h3 class="card-title text-center">6L</h3>
+                <h3 class="card-title text-center">
+                    <a class='text-decoration-none text-white'
+                        href="{{ url_for('get_archive_by_line', line='6L') }}">6L</a>
+                </h3>
                 <div class="card-body">
                     <p class="card-text">Total Max P.A.T.C.H. : {{ status_6['max_patch_patterns'] }} / {{
                         status_6['total_patterns'] }}</p>
@@ -142,7 +151,10 @@
                 </div>
             </div>
             <div class="card card-6l-plus-bg text-white mb-4">
-                <h3 class="card-title text-center">6L+</h3>
+                <h3 class="card-title text-center">
+                    <a class='text-decoration-none text-white'
+                        href="{{ url_for('get_archive_by_line', line='6L+') }}">6L+</a>
+                </h3>
                 <div class="card-body">
                     <p class="card-text">Total Max P.A.T.C.H. : {{ status_6_plus['max_patch_patterns'] }} / {{
                         status_6_plus['total_patterns'] }}</p>

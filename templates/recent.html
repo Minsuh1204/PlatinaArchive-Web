@@ -6,76 +6,80 @@
 {% block content %}
 <div class="container my-5">
     <h3 class="text-center mb-4"> {{ current_user.name }}님의 최근기록 Top 50</h3>
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">재킷</th>
-                <th scope="col">제목</th>
-                <th scope="col">난이도</th>
-                <th scope="col">판정</th>
-                <th scope="col">점수</th>
-                <th scope="col">P.A.T.C.H.</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for result in recent_results %}
-            {% set is_initial = result.old_judge == 0 and result.old_score == 0 %}
-            {% set judge_str = "{}%".format(result.judge) %}
-            {% set old_judge_str = "{}%".format(result.old_judge) %}
-            {% if result.is_max_patch %}
-            {% set judge_str = judge_str ~ " [MAX P.A.T.C.H.]" %}
-            {% elif result.judge == 100 %}
-            {% set judge_str = judge_str ~ " [PERFECT DECODE]" %}
-            {% elif result.is_full_combo %}
-            {% set judge_str = judge_str ~ " [FULL COMBO]" %}
-            {% endif %}
-            {% if result.old_is_max_patch %}
-            {% set old_judge_str = old_judge_str ~ " [MAX P.A.T.C.H.]" %}
-            {% elif result.old_judge == 100 %}
-            {% set old_judge_str = old_judge_str ~ " [PERFECT DECODE]" %}
-            {% elif result.old_is_full_combo %}
-            {% set old_judge_str = old_judge_str ~ " [FULL COMBO]" %}
-            {% endif %}
-            <tr>
-                <td style="width: 100px;">
-                    {% if result.difficulty == "PLUS" %}
-                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png" alt="Album Jacket"
-                        class="img-fluid" style="max-height: 80px; width: auto;">
-                    {% else %}
-                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
-                        class="img-fluid" style="max-height: 80px; width: auto;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">재킷</th>
+                        <th scope="col">제목</th>
+                        <th scope="col">난이도</th>
+                        <th scope="col">판정</th>
+                        <th scope="col">점수</th>
+                        <th scope="col">P.A.T.C.H.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in recent_results %}
+                    {% set is_initial = result.old_judge == 0 and result.old_score == 0 %}
+                    {% set judge_str = "{}%".format(result.judge) %}
+                    {% set old_judge_str = "{}%".format(result.old_judge) %}
+                    {% if result.is_max_patch %}
+                    {% set judge_str = judge_str ~ " [MAX P.A.T.C.H.]" %}
+                    {% elif result.judge == 100 %}
+                    {% set judge_str = judge_str ~ " [PERFECT DECODE]" %}
+                    {% elif result.is_full_combo %}
+                    {% set judge_str = judge_str ~ " [FULL COMBO]" %}
                     {% endif %}
-                </td>
-                <td>
-                    {{ result.song.title }}
-                </td>
-                <td>
-                    {{ result.line }}L {{ result.difficulty }} Lv.{{ result.level }}
-                </td>
-                {% if is_initial %}
-                <td>
-                    N/A -> {{ judge_str }}
-                </td>
-                <td>
-                    N/A -> {{ "{:,}".format(result.score) }}
-                </td>
-                <td>
-                    N/A -> {{ result.patch }}
-                </td>
-                {% else %}
-                <td>
-                    {{ old_judge_str }} -> {{ judge_str }}
-                </td>
-                <td>
-                    {{ "{:,}".format(result.old_score) }} -> {{ "{:,}".format(result.score) }}
-                </td>
-                <td>
-                    {{ result.old_patch }} -> {{ result.patch }}
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    {% if result.old_is_max_patch %}
+                    {% set old_judge_str = old_judge_str ~ " [MAX P.A.T.C.H.]" %}
+                    {% elif result.old_judge == 100 %}
+                    {% set old_judge_str = old_judge_str ~ " [PERFECT DECODE]" %}
+                    {% elif result.old_is_full_combo %}
+                    {% set old_judge_str = old_judge_str ~ " [FULL COMBO]" %}
+                    {% endif %}
+                    <tr>
+                        <td style="width: 100px;">
+                            {% if result.difficulty == "PLUS" %}
+                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png"
+                                alt="Album Jacket" class="img-fluid" style="max-height: 80px; width: auto;">
+                            {% else %}
+                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
+                                class="img-fluid" style="max-height: 80px; width: auto;">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ result.song.title }}
+                        </td>
+                        <td>
+                            {{ result.line }}L {{ result.difficulty }} Lv.{{ result.level }}
+                        </td>
+                        {% if is_initial %}
+                        <td>
+                            N/A -> {{ judge_str }}
+                        </td>
+                        <td>
+                            N/A -> {{ "{:,}".format(result.score) }}
+                        </td>
+                        <td>
+                            N/A -> {{ result.patch }}
+                        </td>
+                        {% else %}
+                        <td>
+                            {{ old_judge_str }} -> {{ judge_str }}
+                        </td>
+                        <td>
+                            {{ "{:,}".format(result.old_score) }} -> {{ "{:,}".format(result.score) }}
+                        </td>
+                        <td>
+                            {{ result.old_patch }} -> {{ result.patch }}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
