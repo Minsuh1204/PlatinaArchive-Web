@@ -12,6 +12,7 @@ from flask import (
     render_template,
     request,
     url_for,
+    send_file,
 )
 from flask_jwt_extended import (
     JWTManager,
@@ -122,6 +123,12 @@ def handle_not_logged_in(reason):
 @jwt_required(optional=True)
 def homepage():
     return render_template("home.html")
+
+
+@app.route("/favicon.ico")
+@jwt_required(optional=True)
+def favicon():
+    return send_file("./static/favicon.ico")
 
 
 @app.route("/login", methods=["POST", "GET"])
