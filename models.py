@@ -110,36 +110,39 @@ class Decoder(db.Model):
         back_populates="decoder_obj"
     )
 
-    def calculate_emblem(self, line: Lines, is_plus: bool) -> DecoderEmblem:
+    def calculate_emblem(
+        self, line: Lines, is_plus: bool
+    ) -> tuple[float, DecoderEmblem]:
         total_patch = sum(
             result.patch for result in self.get_top_50_patch_results(line, is_plus)
         )
         if total_patch < 5000:
-            return "bit"
+            emblem = "bit"
         elif total_patch < 10000:
-            return "nibble"
+            emblem = "nibble"
         elif total_patch < 15000:
-            return "Byte"
+            emblem = "Byte"
         elif total_patch < 20000:
-            return "deca"
+            emblem = "deca"
         elif total_patch < 25000:
-            return "hecto"
+            emblem = "hecto"
         elif total_patch < 30000:
-            return "kilo"
+            emblem = "kilo"
         elif total_patch < 35000:
-            return "Mega"
+            emblem = "Mega"
         elif total_patch < 40000:
-            return "Giga"
+            emblem = "Giga"
         elif total_patch < 45000:
-            return "Tera"
+            emblem = "Tera"
         elif total_patch < 50000:
-            return "Peta"
+            emblem = "Peta"
         elif total_patch < 55000:
-            return "Exa"
+            emblem = "Exa"
         elif total_patch < 60000:
-            return "Zeta"
+            emblem = "Zeta"
         else:
-            return "Yotta"
+            emblem = "Yotta"
+        return total_patch, emblem
 
     def get_top_50_patch_results(
         self, line: Lines, is_plus: bool

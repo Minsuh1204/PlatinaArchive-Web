@@ -252,9 +252,13 @@ def get_archive_by_line(line: str):
     top_50_patch_results = decoder.get_top_50_patch_results(
         line_int, line.endswith("+")
     )
-    emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
+    total_patch, emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
     return render_template(
-        "archive_line.html", results=top_50_patch_results, emblem=emblem, line=line
+        "archive_line.html",
+        results=top_50_patch_results,
+        emblem=emblem,
+        line=line,
+        total_patch=total_patch,
     )
 
 
