@@ -33,7 +33,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-type Lines = Literal["4L", "4L+", "6L", "6L+"]
+lines = Literal["4L", "4L+", "6L", "6L+"]
 
 VERSION = (1, 3, 2)
 ENDPOINTS_MAP: dict[str, str] = {
@@ -246,7 +246,7 @@ def decoder_archive():
 @app.route("/archive/<line>")
 @jwt_required()
 def get_archive_by_line(line: str):
-    if not line in Lines:
+    if not line in lines:
         abort(404)
     decoder: Decoder = current_user
     line_int = int(line.split("L")[0])
