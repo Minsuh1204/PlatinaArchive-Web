@@ -1,6 +1,5 @@
 import os
 from datetime import timedelta
-from typing import Literal
 
 import redis
 from dotenv import load_dotenv
@@ -33,7 +32,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-lines = Literal["4L", "4L+", "6L", "6L+"]
+lines = ["4L", "4L+", "6L", "6L+"]
 
 VERSION = (1, 3, 2)
 ENDPOINTS_MAP: dict[str, str] = {
