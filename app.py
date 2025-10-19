@@ -1,10 +1,12 @@
 import os
 from datetime import timedelta
+from typing import Literal
 
 import redis
 from dotenv import load_dotenv
 from flask import (
     Flask,
+    abort,
     flash,
     make_response,
     redirect,
@@ -31,7 +33,9 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
 load_dotenv()
 
-VERSION = (1, 3, 1)
+type Lines = Literal["4L", "4L+", "6L", "6L+"]
+
+VERSION = (1, 3, 2)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -236,6 +240,24 @@ def decoder_archive():
         overall_full_combo=overall_full_combo,
         overall_perfect_decode=overall_perfect_decode,
         overall_max_patch=overall_max_patch,
+    )
+
+
+@app.route("/archive/<line>")
+@jwt_required()
+def get_archive_by_line(line: str):
+    if not line in Lines:
+        abort(404)
+    decoder: Decoder = current_user
+    line_int = int(line.split("L")[0])
+    top_50_patch_results = decoder.get_top_50_patch_results(
+        line_int, line.endswith("+")
+    )
+    emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
+    return render_template(
+        "archive_line.html",
+        results=top_50_patch_results,
+        emblem=emblem,
     )
 
 

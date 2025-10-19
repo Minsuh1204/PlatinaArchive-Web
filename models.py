@@ -4,6 +4,7 @@ import os
 import secrets
 from datetime import datetime, timezone
 from hashlib import sha256
+from hmac import compare_digest
 from typing import Literal, TypedDict
 
 from dotenv import load_dotenv
@@ -18,6 +19,21 @@ load_dotenv()
 
 type Lines = Literal[4, 6]
 type Difficulties = Literal["EASY", "HARD", "OVER", "PLUS"]
+type DecoderEmblem = Literal[
+    "bit",
+    "nibble",
+    "Byte",
+    "deca",
+    "hecto",
+    "kilo",
+    "Mega",
+    "Giga",
+    "Tera",
+    "Peta",
+    "Exa",
+    "Zeta",
+    "Yotta",
+]  # These names are from SI byte units
 
 
 class Base(DeclarativeBase):
@@ -93,6 +109,37 @@ class Decoder(db.Model):
     decode_results: Mapped[list[DecodeResult]] = relationship(
         back_populates="decoder_obj"
     )
+
+    def calculate_emblem(self, line: Lines, is_plus: bool) -> DecoderEmblem:
+        total_patch = sum(
+            result.patch for result in self.get_top_50_patch_results(line, is_plus)
+        )
+        if total_patch < 5000:
+            return "bit"
+        elif total_patch < 10000:
+            return "nibble"
+        elif total_patch < 15000:
+            return "Byte"
+        elif total_patch < 20000:
+            return "deca"
+        elif total_patch < 25000:
+            return "hecto"
+        elif total_patch < 30000:
+            return "kilo"
+        elif total_patch < 35000:
+            return "Mega"
+        elif total_patch < 40000:
+            return "Giga"
+        elif total_patch < 45000:
+            return "Tera"
+        elif total_patch < 50000:
+            return "Peta"
+        elif total_patch < 55000:
+            return "Exa"
+        elif total_patch < 60000:
+            return "Zeta"
+        else:
+            return "Yotta"
 
     def get_top_50_patch_results(
         self, line: Lines, is_plus: bool
@@ -194,7 +241,8 @@ class Decoder(db.Model):
         decoder = db.session.get(Decoder, name)
         if not decoder:
             return None
-        if sha256(given_secret.encode()).hexdigest() == decoder.hashed_secret:
+        given_hash = sha256(given_secret.encode()).hexdigest()
+        if compare_digest(given_hash, decoder.hashed_secret):
             return decoder
         else:
             return None
