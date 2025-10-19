@@ -18,7 +18,8 @@
         </tr>
     </thead>
     <tbody>
-        {% for i in range(len(results)) %}
+        {% set size = results | length %}
+        {% for i in range(size) %}
         {% set result = results[i] %}
         <tr>
             <td>
