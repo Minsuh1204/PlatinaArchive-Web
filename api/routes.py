@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, make_response, request
 
-from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
+from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -27,6 +27,11 @@ def check_cache_headers(db_last_modified: datetime):
             pass
 
     return None
+
+
+@api_bp_v1.route("/client_version")
+def client_version():
+    return jsonify(major=0, minor=4, patch=2)
 
 
 @api_bp_v1.route("/platina_songs")
@@ -160,7 +165,7 @@ def update_archive():
 def get_archive():
     params = request.get_json()
     api_key = params.get("api_key")
-    decoder = Decoder.load_by_key(api_key)
+    decoder: Decoder | None = Decoder.load_by_key(api_key)
     if not decoder:
         msg = {"msg": "Invalid API key"}
         return jsonify(msg), 401
