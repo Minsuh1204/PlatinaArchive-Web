@@ -31,7 +31,7 @@ def check_cache_headers(db_last_modified: datetime):
 
 @api_bp_v1.route("/client_version")
 def client_version():
-    return jsonify(major=0, minor=4, patch=2)
+    return jsonify(major=0, minor=2, patch=5)
 
 
 @api_bp_v1.route("/platina_songs")
@@ -102,7 +102,11 @@ def register_decoder():
 @api_bp_v1.route("/update_archive", methods=["POST"])
 def update_archive():
     params = request.get_json()
-    api_key = params.get("api_key")
+    auth_header = request.headers.get("Authorizaton", "")
+    if auth_header.startswith("Bearer "):
+        api_key = auth_header[7:]
+    else:
+        api_key = ""
     song_id = params.get("song_id")
     line = params.get("line")
     difficulty = params.get("difficulty")
@@ -163,8 +167,11 @@ def update_archive():
 
 @api_bp_v1.route("/get_archive", methods=["POST"])
 def get_archive():
-    params = request.get_json()
-    api_key = params.get("api_key")
+    auth_header = request.headers.get("Authorizaton", "")
+    if auth_header.startswith("Bearer "):
+        api_key = auth_header[7:]
+    else:
+        api_key = ""
     decoder: Decoder | None = Decoder.load_by_key(api_key)
     if not decoder:
         msg = {"msg": "Invalid API key"}
