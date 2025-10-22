@@ -298,18 +298,18 @@ def search():
 def get_song(song_id: int):
     song_data = PlatinaSong.from_song_id(song_id)
     results: list[DecodeResult] = song_data.decode_results
-    results_4l_easy = None
-    results_4l_hard = None
-    results_4l_over = None
-    results_4l_plus_easy = None
-    results_4l_plus_hard = None
-    results_4l_plus_over = None
-    results_6l_easy = None
-    results_6l_hard = None
-    results_6l_over = None
-    results_6l_plus_easy = None
-    results_6l_plus_hard = None
-    results_6l_plus_over = None
+    results_4l_easy = "N/A"
+    results_4l_hard = "N/A"
+    results_4l_over = "N/A"
+    results_4l_plus_easy = "N/A"
+    results_4l_plus_hard = "N/A"
+    results_4l_plus_over = "N/A"
+    results_6l_easy = "N/A"
+    results_6l_hard = "N/A"
+    results_6l_over = "N/A"
+    results_6l_plus_easy = "N/A"
+    results_6l_plus_hard = "N/A"
+    results_6l_plus_over = "N/A"
     non_plus_results = [r for r in results if r.difficulty != "PLUS"]
     for r in non_plus_results:
         if r.line == 4:
