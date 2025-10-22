@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-<container class="my-5">
+<div class="container my-5">
     <h3 class="text-center mb-4">{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50</h3>
     <h4 class="text-center mb-4">{{ emblem | upper }} ({{ "{:,}".format(total_patch) }})</h4>
     <div class="row justify-content-center">
@@ -53,5 +53,5 @@
             </table>
         </div>
     </div>
-</container>
+</div>
 {% endblock %}
