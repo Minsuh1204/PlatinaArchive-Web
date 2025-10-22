@@ -40,3 +40,8 @@
 .platina-full-combo-bg {
     background-color: var(--platina-full-combo) !important;
 }
+
+.inline-icon {
+    height: 1.2em;
+    vertical-align: middle;
+}

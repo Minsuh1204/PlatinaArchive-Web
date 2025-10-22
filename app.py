@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 4, 1)
+VERSION = (1, 4, 2)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -376,12 +376,12 @@ def _format_judge_str(result: DecodeResult) -> str:
     base = f"{result.judge}%"
     additional = ""
     if result.is_full_combo:
-        additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='img-fluid'>"
+        additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='inline-icon'>"
     elif result.judge == 100:
-        additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='img-fluid'>"
+        additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='inline-icon'>"
     elif result.is_max_patch:
         additional = (
-            " <div style='color: var(--platina-max-patch)'>MAX P.A.T.C.H.</div>"
+            " <span style='color: var(--platina-max-patch)'>MAX P.A.T.C.H.</span>"
         )
     return base + additional
 
