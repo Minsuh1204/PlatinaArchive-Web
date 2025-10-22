@@ -375,14 +375,14 @@ def _get_song_titles() -> list[str]:
 def _format_judge_str(result: DecodeResult) -> str:
     base = f"{result.judge}%"
     additional = ""
-    if result.is_full_combo:
-        additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='inline-icon'>"
-    elif result.judge == 100:
-        additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='inline-icon'>"
-    elif result.is_max_patch:
+    if result.is_max_patch:
         additional = (
             " <span style='color: var(--platina-max-patch)'>MAX P.A.T.C.H.</span>"
         )
+    elif result.judge == 100:
+        additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='inline-icon'>"
+    elif result.is_full_combo:
+        additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='inline-icon'>"
     return base + additional
 
 
