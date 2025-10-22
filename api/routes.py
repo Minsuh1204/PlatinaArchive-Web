@@ -102,11 +102,7 @@ def register_decoder():
 @api_bp_v1.route("/update_archive", methods=["POST"])
 def update_archive():
     params = request.get_json()
-    auth_header = request.headers.get("Authorizaton", "")
-    if auth_header.startswith("Bearer "):
-        api_key = auth_header[7:]
-    else:
-        api_key = ""
+    api_key = request.headers.get("X-API-Key", "::")
     song_id = params.get("song_id")
     line = params.get("line")
     difficulty = params.get("difficulty")
@@ -167,11 +163,7 @@ def update_archive():
 
 @api_bp_v1.route("/get_archive", methods=["POST"])
 def get_archive():
-    auth_header = request.headers.get("Authorizaton", "")
-    if auth_header.startswith("Bearer "):
-        api_key = auth_header[7:]
-    else:
-        api_key = ""
+    api_key = request.headers.get("X-API-Key", "::")
     decoder: Decoder | None = Decoder.load_by_key(api_key)
     if not decoder:
         msg = {"msg": "Invalid API key"}
