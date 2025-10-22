@@ -5,13 +5,13 @@
 {% block content %}
 <container class="my-5">
     <h3 class="text-center mb-4">{{ song.title }}</h3>
-    <h4 class="text-center mb-4">4L</h4>
+    <img class="" src="https://r2.platina-archive.app/{{ song.id }}.png" alt="Jacket Image">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
             <table class="table table-hover">
                 <thead class="table-dark">
                 <tr>
-                    <th scope="col">라인</th>
+                    <th scope="col" style="white-space: nowrap;">라인</th>
                     <th scope="col">EASY</th>
                     <th scope="col">HARD</th>
                     <th scope="col">OVER</th>
@@ -24,21 +24,21 @@
                         {% if results_4l_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_easy }}%
+                            {{ results_4l_easy.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_hard }}%
+                            {{ results_4l_hard.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_over  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_over }}%
+                            {{ results_4l_over.judge }}%
                         {% endif %}
                         </td>
                     </tr>
@@ -48,21 +48,21 @@
                         {% if results_4l_plus_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_plus_easy }}%
+                            {{ results_4l_plus_easy.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_plus_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_plus_hard }}%
+                            {{ results_4l_plus_hard.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_plus_over  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_4l_plus_over }}%
+                            {{ results_4l_plus_over.judge }}%
                         {% endif %}
                         </td>
                     </tr>
@@ -72,21 +72,21 @@
                         {% if results_6l_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_easy }}%
+                            {{ results_6l_easy.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_hard }}%
+                            {{ results_6l_hard.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_over  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_over }}%
+                            {{ results_6l_over.judge }}%
                         {% endif %}
                         </td>
                     </tr>
@@ -96,21 +96,21 @@
                         {% if results_6l_plus_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_plus_easy }}%
+                            {{ results_6l_plus_easy.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_plus_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_plus_hard }}%
+                            {{ results_6l_plus_hard.judge }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_plus_over  == "N/A" %}
                             N/A
                         {% else %}
-                            {{ results_6l_plus_over }}%
+                            {{ results_6l_plus_over.judge }}%
                         {% endif %}
                         </td>
                     </tr>

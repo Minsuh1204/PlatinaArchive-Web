@@ -10,7 +10,7 @@
         integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
     <script>
         $(function () {
-            $("#search-query").autocomplete({
+            $("#query").autocomplete({
                 source: function (request, response) {
                     $.ajax({
                         url: "/song_autocomplete", // Flask endpoint for suggestions

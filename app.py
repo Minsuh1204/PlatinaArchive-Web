@@ -290,7 +290,11 @@ def search():
     query = request.args.get("query", "").strip()
     song_titles: list[str] = _get_song_titles()
     if query in song_titles:
-        return ""
+        song_id = db.session.execute(
+            select(PlatinaSong.song_id).filter(PlatinaSong.title == query)
+        ).scalar()
+        return redirect(url_for(get_song, song_id=song_id))
+    abort(404)
 
 
 @app.route("/songs/<int:song_id>")
