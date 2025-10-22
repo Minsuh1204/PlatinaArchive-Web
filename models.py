@@ -198,7 +198,6 @@ class Decoder(db.Model):
             select(func.count())
             .select_from(PlatinaPattern)
             .filter(
-                DecodeResult.decoder == self.name,
                 PlatinaPattern.line == line,
                 pattern_difficulty_filter,
             )
