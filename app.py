@@ -293,7 +293,7 @@ def search():
         song_id = db.session.execute(
             select(PlatinaSong.song_id).filter(PlatinaSong.title == query)
         ).scalar()
-        return redirect(url_for(get_song, song_id=song_id))
+        return redirect(url_for("get_song", song_id=song_id))
     abort(404)
 
 
