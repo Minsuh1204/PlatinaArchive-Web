@@ -9,23 +9,23 @@
     --platina-full-combo: #359885;
 }
 
-.card-overall-bg {
+.platina-overall-bg {
     background-color: var(--platina-core);
 }
 
-.card-4l-bg {
+.platina-4l-bg {
     background-color: var(--platina-4l);
 }
 
-.card-4l-plus-bg {
+.platina-4l-plus-bg {
     background-color: var(--platina-4l-plus);
 }
 
-.card-6l-bg {
+.platina-6l-bg {
     background-color: var(--platina-6l);
 }
 
-.card-6l-plus-bg {
+.platina-6l-plus-bg {
     background-color: var(--platina-6l-plus);
 }
 
