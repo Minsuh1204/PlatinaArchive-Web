@@ -11,7 +11,7 @@
             <table class="table table-hover">
                 <thead class="table-dark">
                 <tr>
-                    <th scope="col" style="white-space: nowrap;">라인</th>
+                    <th scope="col"></th>
                     <th scope="col">EASY</th>
                     <th scope="col">HARD</th>
                     <th scope="col">OVER</th>
@@ -19,98 +19,98 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="platina-4l-bg">4L</td>
+                        <td class="platina-4l-bg text-white">4L</td>
                         <td>
                         {% if results_4l_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_easy.level }} - {{ results_4l_easy.judge }}%
+                            Lv.{{ results_4l_easy.level }} - {{ _format_judge_str(results_4l_easy) | safe }}
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_hard.level }} - {{ results_4l_hard.judge }}%
+                            Lv.{{ results_4l_hard.level }} - {{ _formate_judge_str(results_4l_hard) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_over  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_over.level }} - {{ results_4l_over.judge }}%
+                            Lv.{{ results_4l_over.level }} - {{ _formate_judge_str(results_4l_over) | safe }}%
                         {% endif %}
                         </td>
                     </tr>
                     <tr>
-                        <td class="platina-4l-plus-bg">4L+</td>
+                        <td class="platina-4l-plus-bg text-white">4L+</td>
                         <td>
                         {% if results_4l_plus_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_plus_easy.level }} - {{ results_4l_plus_easy.judge }}%
+                            Lv.{{ results_4l_plus_easy.level }} - {{ _formate_judge_str(results_4l_plus_easy) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_plus_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_plus_hard.level }} - {{ results_4l_plus_hard.judge }}%
+                            Lv.{{ results_4l_plus_hard.level }} - {{ _formate_judge_str(results_4l_plus_hard) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_4l_plus_over  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_4l_plus_over.level }} - {{ results_4l_plus_over.judge }}%
+                            Lv.{{ results_4l_plus_over.level }} - {{ _formate_judge_str(results_4l_plus_over) | safe }}%
                         {% endif %}
                         </td>
                     </tr>
                     <tr>
-                        <td class="platina-6l-bg">6L</td>
+                        <td class="platina-6l-bg text-white">6L</td>
                         <td>
                         {% if results_6l_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_easy.level }} - {{ results_6l_easy.judge }}%
+                            Lv.{{ results_6l_easy.level }} - {{ _formate_judge_str(results_6l_easy) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_hard.level }} - {{ results_6l_hard.judge }}%
+                            Lv.{{ results_6l_hard.level }} - {{ _formate_judge_str(results_6l_hard) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_over  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_over.level }} - {{ results_6l_over.judge }}%
+                            Lv.{{ results_6l_over.level }} - {{ _formate_judge_str(results_6l_over) | safe }}%
                         {% endif %}
                         </td>
                     </tr>
                     <tr>
-                        <td class="platina-6l-plus-bg">6L+</td>
+                        <td class="platina-6l-plus-bg text-white">6L+</td>
                         <td>
                         {% if results_6l_plus_easy  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_plus_easy.level }} - {{ results_6l_plus_easy.judge }}%
+                            Lv.{{ results_6l_plus_easy.level }} - {{ _formate_judge_str(results_6l_plus_easy) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_plus_hard  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_plus_hard.level }} - {{ results_6l_plus_hard.judge }}%
+                            Lv.{{ results_6l_plus_hard.level }} - {{ _formate_judge_str(results_6l_plus_hard) | safe }}%
                         {% endif %}
                         </td>
                         <td>
                         {% if results_6l_plus_over  == "N/A" %}
                             N/A
                         {% else %}
-                            Lv.{{ results_6l_plus_easy.level }} - {{ results_6l_plus_over.judge }}%
+                            Lv.{{ results_6l_plus_easy.level }} - {{ _formate_judge_str(results_6l_plus_over) | safe }}%
                         {% endif %}
                         </td>
                     </tr>

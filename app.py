@@ -363,12 +363,27 @@ def get_song(song_id: int):
         results_6l_plus_easy=results_6l_plus_easy,
         results_6l_plus_hard=results_6l_plus_hard,
         results_6l_plus_over=results_6l_plus_over,
+        _format_judge_str=_format_judge_str,
     )
 
 
 @lru_cache(maxsize=1)
 def _get_song_titles() -> list[str]:
     return [s.title for s in PlatinaSong.get_all()]
+
+
+def _format_judge_str(result: DecodeResult) -> str:
+    base = f"{result.judge}%"
+    additional = ""
+    if result.is_full_combo:
+        additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='img-fluid'>"
+    elif result.judge == 100:
+        additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='img-fluid'>"
+    elif result.is_max_patch:
+        additional = (
+            " <div style='color: var(--platina-max-patch)'>MAX P.A.T.C.H.</div>"
+        )
+    return base + additional
 
 
 if __name__ == "__main__":
