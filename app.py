@@ -1,5 +1,6 @@
 import os
 from datetime import timedelta
+from functools import lru_cache
 
 import redis
 from dotenv import load_dotenv
@@ -13,6 +14,7 @@ from flask import (
     request,
     url_for,
     send_file,
+    jsonify,
 )
 from flask_jwt_extended import (
     JWTManager,
@@ -26,7 +28,7 @@ from flask_jwt_extended import (
 from sqlalchemy import desc, select
 
 from api.routes import api_bp_v1
-from models import Decoder, DecodeResult, db
+from models import Decoder, DecodeResult, db, PlatinaSong
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
@@ -34,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 3, 3)
+VERSION = (1, 4, 0)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -260,6 +262,31 @@ def get_archive_by_line(line: str):
         line=line,
         total_patch=total_patch,
     )
+
+
+@app.route("/song_autocomplete")
+def song_autocomplete():
+    query = request.args.get("query", "").lower().strip()
+    if not query or len(query) < 2:
+        return jsonify([])
+    song_titles: list[str] = _get_song_titles()
+    starts_with = []
+    contains = []
+
+    for title in song_titles:
+        title_lower = title.lower()
+        if title_lower.startswith(query):
+            starts_with.append(title)
+        elif query in title_lower:
+            contains.append(title)
+    suggestions = (starts_with + contains)[:10]
+
+    return jsonify(suggestions)
+
+
+@lru_cache(maxsize=1)
+def _get_song_titles() -> list[str]:
+    return [s.title for s in PlatinaSong.get_all()]
 
 
 if __name__ == "__main__":
