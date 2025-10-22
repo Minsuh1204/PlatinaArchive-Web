@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ song.title }} 정보 | {{ title }}
+{% endblock %}
+{% block content %}
+<container class="my-5">
+    <h3 class="text-center mb-4">{{ song.title }}</h3>
+    <h4 class="text-center mb-4">4L</h4>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">라인</th>
+                    <th scope="col">EASY</th>
+                    <th scope="col">HARD</th>
+                    <th scope="col">OVER</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>4L</td>
+                        <td>
+                        {% if results_4l_easy is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_easy }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_4l_hard is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_hard }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_4l_over is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_over }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4L+</td>
+                        <td>
+                        {% if results_4l_plus_easy is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_plus_easy }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_4l_plus_hard is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_plus_hard }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_4l_plus_over is None %}
+                            N/A
+                        {% else %}
+                            {{ results_4l_plus_over }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6L</td>
+                        <td>
+                        {% if results_6l_easy is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_easy }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_6l_hard is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_hard }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_6l_over is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_over }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6L+</td>
+                        <td>
+                        {% if results_6l_plus_easy is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_plus_easy }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_6l_plus_hard is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_plus_hard }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if results_6l_plus_over is None %}
+                            N/A
+                        {% else %}
+                            {{ results_6l_plus_over }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</container>
+{% endblock %}

@@ -79,6 +79,10 @@ class PlatinaSong(db.Model):
             if ptn.line == line and ptn.difficulty == difficulty
         ]
 
+    @classmethod
+    def from_song_id(cls, song_id: int):
+        return db.session.get(PlatinaSong, song_id)
+
 
 class PlatinaPattern(db.Model):
     __tablename__ = "PlatinaPatterns"

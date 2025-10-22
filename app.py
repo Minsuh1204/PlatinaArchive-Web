@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 4, 0)
+VERSION = (1, 4, 1)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -282,6 +282,84 @@ def song_autocomplete():
     suggestions = (starts_with + contains)[:10]
 
     return jsonify(suggestions)
+
+
+@app.route("/search")
+@jwt_required()
+def search():
+    query = request.args.get("query", "").strip()
+    song_titles: list[str] = _get_song_titles()
+    if query in song_titles:
+        return ""
+
+
+@app.route("/songs/<int:song_id>")
+@jwt_required()
+def get_song(song_id: int):
+    song_data = PlatinaSong.from_song_id(song_id)
+    results: list[DecodeResult] = song_data.decode_results
+    results_4l_easy = None
+    results_4l_hard = None
+    results_4l_over = None
+    results_4l_plus_easy = None
+    results_4l_plus_hard = None
+    results_4l_plus_over = None
+    results_6l_easy = None
+    results_6l_hard = None
+    results_6l_over = None
+    results_6l_plus_easy = None
+    results_6l_plus_hard = None
+    results_6l_plus_over = None
+    non_plus_results = [r for r in results if r.difficulty != "PLUS"]
+    for r in non_plus_results:
+        if r.line == 4:
+            if r.difficulty == "EASY":
+                results_4l_easy = r
+            elif r.difficulty == "HARD":
+                results_4l_hard = r
+            else:
+                results_4l_over = r
+        else:
+            if r.difficulty == "EASY":
+                results_6l_easy = r
+            elif r.difficulty == "HARD":
+                results_6l_hard = r
+            else:
+                results_6l_over = r
+    results_4l_plus = [r for r in results if r.line == 4 and r.difficulty == "PLUS"]
+    for r in results_4l_plus:
+        if r.level < 10:
+            results_4l_plus_easy = r
+        elif r.level < 20:
+            results_4l_plus_hard = r
+        else:
+            results_4l_plus_over = r
+    results_6l_plus = [r for r in results if r.line == 6 and r.difficulty == "PLUS"]
+    for r in results_6l_plus:
+        if r.level < 10:
+            results_6l_plus_easy = r
+        elif r.level < 20:
+            results_6l_plus_hard = r
+        else:
+            results_6l_plus_over = r
+    if not song_data:
+        abort(404)
+    return render_template(
+        "song_db.html",
+        song=song_data,
+        results_4l_easy=results_4l_easy,
+        results_4l_hard=results_4l_hard,
+        results_4l_over=results_4l_over,
+        results_4l_plus_easy=results_4l_plus_easy,
+        results_4l_plus_hard=results_4l_plus_hard,
+        results_4l_plus_over=results_4l_plus_over,
+        results_6l_easy=results_6l_easy,
+        results_6l_hard=results_6l_hard,
+        results_6l_over=results_6l_over,
+        results_6l_plus_easy=results_6l_plus_easy,
+        results_6l_plus_hard=results_6l_plus_hard,
+        results_6l_plus_over=results_6l_plus_over,
+    )
 
 
 @lru_cache(maxsize=1)
