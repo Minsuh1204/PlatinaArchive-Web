@@ -188,22 +188,36 @@ class Decoder(db.Model):
         cleared_patterns_select = (
             select(func.count())
             .select_from(DecodeResult)
-            .filter(DecodeResult.line == line, result_difficulty_filter)
+            .filter(
+                DecodeResult.decoder == self.name,
+                DecodeResult.line == line,
+                result_difficulty_filter,
+            )
         )
         total_patterns = db.session.scalar(
             select(func.count())
             .select_from(PlatinaPattern)
-            .filter(PlatinaPattern.line == line, pattern_difficulty_filter)
+            .filter(
+                DecodeResult.decoder == self.name,
+                PlatinaPattern.line == line,
+                pattern_difficulty_filter,
+            )
         )
         cleared_patterns = db.session.scalar(cleared_patterns_select)
         full_combo_patterns = db.session.scalar(
-            cleared_patterns_select.filter(DecodeResult.is_full_combo)
+            cleared_patterns_select.filter(
+                DecodeResult.decoder == self.name, DecodeResult.is_full_combo
+            )
         )
         perfect_decode_patterns = db.session.scalar(
-            cleared_patterns_select.filter(DecodeResult.judge == 100)
+            cleared_patterns_select.filter(
+                DecodeResult.decoder == self.name, DecodeResult.judge == 100
+            )
         )
         max_patch_patterns = db.session.scalar(
-            cleared_patterns_select.filter(DecodeResult.is_max_patch)
+            cleared_patterns_select.filter(
+                DecodeResult.decoder == self.name, DecodeResult.is_max_patch
+            )
         )
         return {
             "decoder": str(self.name),
