@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 4, 3)
+VERSION = (1, 4, 4)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -265,6 +265,7 @@ def get_archive_by_line(line: str):
         emblem=emblem,
         line=line,
         total_patch=total_patch,
+        _format_judge_str=_format_judge_str,
     )
 
 

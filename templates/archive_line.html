@@ -42,7 +42,7 @@
                             Lv.{{ result.level }}
                         </td>
                         <td>
-                            {{ result.judge }}%
+                            {{ _format_judge_str(result) | safe }}
                         </td>
                         <td>
                             {{ result.patch }}
