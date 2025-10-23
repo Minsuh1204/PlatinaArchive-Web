@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 4, 2)
+VERSION = (1, 4, 3)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -189,7 +189,11 @@ def recent():
         .scalars()
         .all()
     )
-    return render_template("recent.html", recent_results=recent_50_results)
+    return render_template(
+        "recent.html",
+        recent_results=recent_50_results,
+        _format_judge_str=_format_judge_str,
+    )
 
 
 @app.route("/archive")
@@ -372,7 +376,19 @@ def _get_song_titles() -> list[str]:
     return [s.title for s in PlatinaSong.get_all()]
 
 
-def _format_judge_str(result: DecodeResult) -> str:
+def _format_judge_str(result: DecodeResult, old: bool = False) -> str:
+    if old:
+        base = f"{result.old_judge}%"
+        additional = ""
+        if result.old_is_max_patch:
+            additional = (
+                " <span style='color: var(--platina-max-patch)'>MAX P.A.T.C.H.</span>"
+            )
+        elif result.old_judge == 100:
+            additional = " <img src='https://r2.platina-archive.app/perfect_decode.png' class='inline-icon'>"
+        elif result.old_is_full_combo:
+            additional = " <img src='https://r2.platina-archive.app/full_combo.png' class='inline-icon'>"
+        return base + additional
     base = f"{result.judge}%"
     additional = ""
     if result.is_max_patch:
