@@ -378,6 +378,8 @@ def _get_song_titles() -> list[str]:
 
 def _format_judge_str(result: DecodeResult, old: bool = False) -> str:
     if old:
+        if result.old_judge == 0:
+            return ""
         base = f"{result.old_judge}%"
         additional = ""
         if result.old_is_max_patch:
