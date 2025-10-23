@@ -39,7 +39,7 @@
                         </td>
                         {% if is_initial %}
                         <td>
-                            N/A -> {{ _format_judge_str(result) }}
+                            N/A -> {{ _format_judge_str(result) | safe }}
                         </td>
                         <td>
                             N/A -> {{ "{:,}".format(result.score) }}
@@ -49,7 +49,7 @@
                         </td>
                         {% else %}
                         <td>
-                            {{ _format_judge_str(result, True) }} -> {{ _format_judge_str(result) }}
+                            {{ _format_judge_str(result, True) | safe }} -> {{ _format_judge_str(result) | safe }}
                         </td>
                         <td>
                             {{ "{:,}".format(result.old_score) }} -> {{ "{:,}".format(result.score) }}
