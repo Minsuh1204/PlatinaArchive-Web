@@ -40,13 +40,13 @@
                         </td>
                         {% if is_initial %}
                         <td>
-                            N/A -> {{ _format_judge_str(result) | safe }}
+                            -> {{ _format_judge_str(result) | safe }}
                         </td>
                         <td>
-                            N/A -> {{ "{:,}".format(result.score) }}
+                            -> {{ "{:,}".format(result.score) }}
                         </td>
                         <td>
-                            N/A -> {{ result.patch }}
+                            -> {{ result.patch }}
                         </td>
                         {% else %}
                         <td>
