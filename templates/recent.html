@@ -21,6 +21,7 @@
                 </thead>
                 <tbody>
                     {% for result in recent_results %}
+                    {% set is_initial = result.old_judge == 0 %}
                     <tr>
                         <td style="width: 100px;">
                             {% if result.difficulty == "PLUS" %}
