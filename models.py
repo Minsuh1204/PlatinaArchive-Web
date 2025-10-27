@@ -47,7 +47,7 @@ class DecoderProgress(db.Model):
     __tablename__ = "DecoderProgress"
 
     decoder: Mapped[str] = mapped_column(
-        "decoder", ForeignKey("Decoder.name"), primary_key=True
+        "decoder", ForeignKey("Decoders.name"), primary_key=True
     )
     line: Mapped[str] = mapped_column("line", primary_key=True)
     total: Mapped[float] = mapped_column("total")
