@@ -51,7 +51,7 @@ class DecoderProgress(db.Model):
     )
     line: Mapped[str] = mapped_column("line", primary_key=True)
     total: Mapped[float] = mapped_column("total")
-    recorded_at: Mapped[datetime] = mapped_column("recorded_at", primary_key=True)
+    recorded_at: Mapped[datetime] = mapped_column("recordedAt", primary_key=True)
     decoder_obj: Mapped[Decoder] = relationship(back_populates="progresses")
 
     @classmethod
