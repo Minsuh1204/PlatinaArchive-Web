@@ -1,9 +1,13 @@
+import os.path
+import sys
 from datetime import datetime, timezone
 
-from app import app
-from models import db, Decoder, DecoderProgress
-
 from sqlalchemy import select
+
+from app import app
+from models import Decoder, DecoderProgress, db
+
+sys.path.insert(0, os.path.dirname((os.path.abspath(__file__))))
 
 
 def get_all_decoder() -> list[Decoder]:
