@@ -4,14 +4,16 @@ from datetime import datetime, timezone
 
 from sqlalchemy import select
 
+sys.path.insert(
+    0, os.path.join(os.path.dirname((os.path.abspath(__file__))), os.path.pardir)
+)
+
 from app import app
 from models import Decoder, DecoderProgress, db
 
-sys.path.insert(0, os.path.dirname((os.path.abspath(__file__))))
-
 
 def get_all_decoder() -> list[Decoder]:
-    return db.execute(select(Decoder)).scalars().all()
+    return db.session.execute(select(Decoder)).scalars().all()
 
 
 def update_decoder_progress(decoder: Decoder):
