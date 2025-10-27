@@ -43,6 +43,28 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 
+class DecoderProgress(db.Model):
+    __tablename__ = "DecoderProgress"
+
+    decoder: Mapped[str] = mapped_column(
+        "decoder", ForeignKey("Decoder.name"), primary_key=True
+    )
+    line: Mapped[str] = mapped_column("line", primary_key=True)
+    total: Mapped[float] = mapped_column("total")
+    recorded_at: Mapped[datetime] = mapped_column("recorded_at", primary_key=True)
+    decoder_obj: Mapped[Decoder] = relationship(back_populates="progresses")
+
+    @classmethod
+    def get_latest_progress(
+        cls, decoder: str, line: Literal["4L", "4L+", "6L", "6L+"]
+    ) -> DecoderProgress | None:
+        return db.session.execute(
+            select(cls)
+            .filter(DecoderProgress.decoder == decoder, DecoderProgress.line == line)
+            .order_by(desc(cls.recorded_at))
+        ).scalar()
+
+
 class DecoderStatus(TypedDict):
     decoder: str
     line: Lines
@@ -113,6 +135,9 @@ class Decoder(db.Model):
     decode_results: Mapped[list[DecodeResult]] = relationship(
         back_populates="decoder_obj"
     )
+    progresses: Mapped[list[DecoderProgress]] = relationship(
+        back_populates="decoder_obj"
+    )
 
     def calculate_emblem(
         self, line: Lines, is_plus: bool
@@ -147,6 +172,9 @@ class Decoder(db.Model):
         else:
             emblem = "Yotta"
         return total_patch, emblem
+
+    def get_top_50_patch_sum(self, line: Lines, is_plus: bool) -> float:
+        return sum(r.patch for r in self.get_top_50_patch_results(line, is_plus))
 
     def get_top_50_patch_results(
         self, line: Lines, is_plus: bool
