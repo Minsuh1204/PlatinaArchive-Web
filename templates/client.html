@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ title }} 클라이언트
+{% endblock %}
+{% block content %}
+    <div class="container my-5">
+        <h3 class="text-center mb-4">{{ title }} 클라이언트</h3>
+        <h4 class="text-center mb-4">설치 방법</h4>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <p>1. <a href="https://github.com/Minsuh1204/PlatinaArchive-Client/releases/latest">이 링크</a>에서 .msi로 끝나는
+                    파일 다운르도, 실행</p>
+                <p>2. 설치가 끝날 때까지 기다리기</p>
+                <p>3. 실행</p>
+            </div>
+        </div>
+        <h4 class="text-center mb-4">사용 방법</h4>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <p><strong>첫 실행 시 닉네임 / 비번 설정</strong>이 완료되어야 기록을 저장할 수 있습니다. 등록이 완료된 후 로그인 정보는 Windows의 자격
+                    증명 관리자 (Credential Manager)에 저장되며 다음에 앱을 실행할 때 자동으로 로그인 정보를 가져옵니다.</p>
+                <p>곡 선택/결과 창에서 Alt+PrtSc, (Alt+Insert 혹은 버튼)으로 분석합니다. (최대 5초 소요)</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -4,11 +4,27 @@ from functools import lru_cache
 
 import redis
 from dotenv import load_dotenv
-from flask import (Flask, abort, flash, jsonify, make_response, redirect,
-                   render_template, request, send_file, url_for)
-from flask_jwt_extended import (JWTManager, create_access_token, current_user,
-                                get_jwt, jwt_required, set_access_cookies,
-                                unset_jwt_cookies)
+from flask import (
+    Flask,
+    abort,
+    flash,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    url_for,
+)
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    current_user,
+    get_jwt,
+    jwt_required,
+    set_access_cookies,
+    unset_jwt_cookies,
+)
 from sqlalchemy import desc, select
 
 from api.routes import api_bp_v1
@@ -117,6 +133,12 @@ def homepage():
 def favicon():
     # Image from: https://platinalab.net/characters
     return send_file("./static/favicon.ico")
+
+
+@app.route("/client")
+@jwt_required(optional=True)
+def client():
+    return render_template("client.html")
 
 
 @app.route("/login", methods=["POST", "GET"])

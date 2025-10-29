@@ -37,6 +37,7 @@ def update_decoder_progress(decoder: Decoder):
         )
         db.session.add(db_4l)
         needs_update = True
+        print(f"Decoder {decoder.name} 4L progress total updated to {db_4l.total}")
 
     if db_4l_plus is None or db_4l_plus.total < current_4l_plus_total:
         db_4l_plus = DecoderProgress(
@@ -47,6 +48,9 @@ def update_decoder_progress(decoder: Decoder):
         )
         db.session.add(db_4l_plus)
         needs_update = True
+        print(
+            f"Decoder {decoder.name} 4L+ progress total updated to {db_4l_plus.total}"
+        )
 
     if db_6l is None or db_6l.total < current_6l_total:
         db_6l = DecoderProgress(
@@ -57,6 +61,7 @@ def update_decoder_progress(decoder: Decoder):
         )
         db.session.add(db_6l)
         needs_update = True
+        print(f"Decoder {decoder.name} 6L progress total updated to {db_6l.total}")
 
     if db_6l_plus is None or db_6l_plus.total < current_6l_plus_total:
         db_6l_plus = DecoderProgress(
@@ -67,6 +72,9 @@ def update_decoder_progress(decoder: Decoder):
         )
         db.session.add(db_6l_plus)
         needs_update = True
+        print(
+            f"Decoder {decoder.name} 6L+ progress total updated to {db_6l_plus.total}"
+        )
 
     if needs_update:
         db.session.commit()
@@ -75,5 +83,8 @@ def update_decoder_progress(decoder: Decoder):
 if __name__ == "__main__":
     with app.app_context():
         decoders = get_all_decoder()
-        for decoder in decoders:
+        print(f"Found {len(decoders)} decoders")
+        for i in range(len(decoders)):
+            decoder = decoders[i]
             update_decoder_progress(decoder)
+            print(f"{i+1}/{len(decoders)} progress updated")
