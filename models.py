@@ -283,6 +283,21 @@ class Decoder(db.Model):
         db.session.commit()
         return decoder, key
 
+    def make_new_secret(self):
+        """Make new secret (used in API key) for decoder and return the UNHASHED API KEY for client-side"""
+        secret = secrets.token_urlsafe(64)
+        key = f"{self.name}::{secret}"
+        hashed_secret = sha256(secret.encode()).hexdigest()
+        # Update DB
+        self.hashed_secret = hashed_secret
+        db.session.add(self)
+        try:
+            db.session.commit()
+            return key
+        except Exception:
+            db.session.rollback()
+            raise
+
     @staticmethod
     def load_by_key(key: str) -> Decoder | None:
         name, given_secret = key.split("::")
