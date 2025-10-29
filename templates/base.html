@@ -73,10 +73,10 @@
 
                 <div class="col-auto">
                     <div class="d-flex gap-2" role="group">
-                        {% if current_user %}
-                            <a href="/client">
+                        <a href="/client">
                             <button type="button" class="btn btn-info">클라이언트</button>
                         </a>
+                        {% if current_user %}
                         <a href="/recent">
                             <button type="button" class="btn btn-primary">최근기록</button>
                         </a>
