@@ -174,7 +174,9 @@ class Decoder(db.Model):
         return total_patch, emblem
 
     def get_top_50_patch_sum(self, line: Lines, is_plus: bool) -> float:
-        return sum(r.patch for r in self.get_top_50_patch_results(line, is_plus))
+        return round(
+            sum(r.patch for r in self.get_top_50_patch_results(line, is_plus)), 2
+        )
 
     def get_top_50_patch_results(
         self, line: Lines, is_plus: bool

@@ -94,7 +94,7 @@ def user_identity_lookup(decoder: Decoder):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return Decoder.query.get(identity)
+    return db.session.get(Decoder, identity)
 
 
 @jwt.invalid_token_loader
@@ -312,6 +312,8 @@ def search():
 @jwt_required()
 def get_song(song_id: int):
     song_data = PlatinaSong.from_song_id(song_id)
+    if not song_data:
+        abort(404)
     results: list[DecodeResult] = song_data.decode_results
     results_4l_easy = "N/A"
     results_4l_hard = "N/A"
@@ -357,8 +359,6 @@ def get_song(song_id: int):
             results_6l_plus_hard = r
         else:
             results_6l_plus_over = r
-    if not song_data:
-        abort(404)
     return render_template(
         "song_db.html",
         song=song_data,

@@ -8,6 +8,7 @@ from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
 
+CLIENT_LATEST = (0, 2, 5)
 SONGS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
 PATTERNS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
 
@@ -31,7 +32,9 @@ def check_cache_headers(db_last_modified: datetime):
 
 @api_bp_v1.route("/client_version")
 def client_version():
-    return jsonify(major=0, minor=2, patch=5)
+    return jsonify(
+        major=CLIENT_LATEST[0], minor=CLIENT_LATEST[1], patch=CLIENT_LATEST[2]
+    )
 
 
 @api_bp_v1.route("/platina_songs")

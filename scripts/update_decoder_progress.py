@@ -28,7 +28,7 @@ def update_decoder_progress(decoder: Decoder):
 
     needs_update = False
 
-    if db_4l is None or db_4l.total < current_4l_total:
+    if db_4l is None or current_4l_total - db_4l.total >= 1:
         db_4l = DecoderProgress(
             decoder=decoder.name,
             line="4L",
@@ -39,7 +39,7 @@ def update_decoder_progress(decoder: Decoder):
         needs_update = True
         print(f"Decoder {decoder.name} 4L progress total updated to {db_4l.total}")
 
-    if db_4l_plus is None or db_4l_plus.total < current_4l_plus_total:
+    if db_4l_plus is None or current_4l_plus_total - db_4l_plus.total >= 1:
         db_4l_plus = DecoderProgress(
             decoder=decoder.name,
             line="4L+",
@@ -52,7 +52,7 @@ def update_decoder_progress(decoder: Decoder):
             f"Decoder {decoder.name} 4L+ progress total updated to {db_4l_plus.total}"
         )
 
-    if db_6l is None or db_6l.total < current_6l_total:
+    if db_6l is None or current_6l_total - db_6l.total >= 1:
         db_6l = DecoderProgress(
             decoder=decoder.name,
             line="6L",
@@ -63,7 +63,7 @@ def update_decoder_progress(decoder: Decoder):
         needs_update = True
         print(f"Decoder {decoder.name} 6L progress total updated to {db_6l.total}")
 
-    if db_6l_plus is None or db_6l_plus.total < current_6l_plus_total:
+    if db_6l_plus is None or current_6l_plus_total - db_6l_plus.total >= 1:
         db_6l_plus = DecoderProgress(
             decoder=decoder.name,
             line="6L+",
