@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, make_response, request
 
-from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong
+from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -190,3 +190,15 @@ def get_archive():
             }
         )
     return jsonify(json_archive)
+
+
+@api_bp_v1.route("/login", methods=["POST"])
+def login():
+    json = request.get_json()
+    name = json.get("name", "")
+    password = json.get("password", "")
+    decoder: Decoder = db.session.get(Decoder, name)
+    if not decoder or not decoder.check_pass(password):
+        return jsonify(msg="로그인 실패"), 401
+    api_key = decoder.make_new_secret()
+    return jsonify(msg="success", key=api_key)
