@@ -27,7 +27,7 @@ def check_cache_headers(db_last_modified: datetime):
             client_date = datetime.fromisoformat(if_modified_since).astimezone(
                 timezone.utc
             )
-            if client_date >= db_last_modified:
+            if client_date >= db_last_modified.astimezone(timezone.utc):
                 response = make_response("", 304)
                 response.headers["Last-Modified"] = db_last_modified_str
                 return response
