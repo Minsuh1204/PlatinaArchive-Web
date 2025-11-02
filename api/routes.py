@@ -24,7 +24,9 @@ def check_cache_headers(db_last_modified: datetime):
 
     if if_modified_since:
         try:
-            client_date = datetime.fromisoformat(if_modified_since)
+            client_date = datetime.fromisoformat(if_modified_since).astimezone(
+                timezone.utc
+            )
             if client_date >= db_last_modified:
                 response = make_response("", 304)
                 response.headers["Last-Modified"] = db_last_modified_str
@@ -51,7 +53,6 @@ def api_platina_songs():
     songs_db_last_updated = datetime.fromisoformat(
         _load_info_json()["songs_db_last_updated"]
     )
-    print(songs_db_last_updated)
     cache_response = check_cache_headers(songs_db_last_updated)
     if cache_response:
         return cache_response
@@ -79,7 +80,9 @@ def api_platina_songs():
 @api_bp_v1.route("/platina_patterns")
 def api_platina_patterns():
     # cache check
-    patterns_db_last_updated = _load_info_json()["patterns_db_last_updated"]
+    patterns_db_last_updated = datetime.fromisoformat(
+        _load_info_json()["patterns_db_last_updated"]
+    )
     cache_response = check_cache_headers(patterns_db_last_updated)
     if cache_response:
         return cache_response
