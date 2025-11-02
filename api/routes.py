@@ -51,6 +51,7 @@ def api_platina_songs():
     songs_db_last_updated = datetime.fromisoformat(
         _load_info_json()["songs_db_last_updated"]
     )
+    print(songs_db_last_updated)
     cache_response = check_cache_headers(songs_db_last_updated)
     if cache_response:
         return cache_response
