@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from functools import lru_cache
 
 import redis
@@ -27,7 +27,7 @@ from flask_jwt_extended import (
 )
 from sqlalchemy import desc, select
 
-from api.routes import api_bp_v1
+from api.routes import api_bp_v1, _load_info_json
 from models import Decoder, DecodeResult, PlatinaSong, db
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -280,6 +280,7 @@ def song_autocomplete():
     query = request.args.get("query", "").lower().strip()
     if not query or len(query) < 2:
         return jsonify([])
+    update_song_titles_cache()
     song_titles: list[str] = _get_song_titles()
     starts_with = []
     contains = []
@@ -299,6 +300,7 @@ def song_autocomplete():
 @jwt_required()
 def search():
     query = request.args.get("query", "").strip()
+    update_song_titles_cache()
     song_titles: list[str] = _get_song_titles()
     if query in song_titles:
         song_id = db.session.execute(
@@ -376,6 +378,18 @@ def get_song(song_id: int):
         results_6l_plus_over=results_6l_plus_over,
         _format_judge_str=_format_judge_str,
     )
+
+
+def update_song_titles_cache() -> bool:
+    """Update the _get_song_titles function's cache. If updates, return True."""
+    today = datetime.today()
+    songs_last_updated = datetime.fromisoformat(
+        _load_info_json()["songs_db_last_updated"]
+    )
+    if today > songs_last_updated:
+        _get_song_titles.cache_clear()
+        return True
+    return False
 
 
 @lru_cache(maxsize=1)

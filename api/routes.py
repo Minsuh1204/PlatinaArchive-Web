@@ -1,16 +1,21 @@
 import os
 from datetime import datetime, timezone
+import json
 
 from flask import Blueprint, jsonify, make_response, request
 
 from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
+BASEDIR = os.path.abspath(os.path.dirname(__file__), os.path.pardir)
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
 
-CLIENT_LATEST = (0, 2, 5)
-SONGS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
-PATTERNS_DB_LAST_UPDATED = datetime(2025, 10, 3).astimezone(timezone.utc)
+os.chdir(BASEDIR)
+
+
+def _load_info_json() -> dict:
+    with open("./info.json") as f:
+        info_dict = json.load(f)
+    return info_dict
 
 
 def check_cache_headers(db_last_modified: datetime):
@@ -32,15 +37,21 @@ def check_cache_headers(db_last_modified: datetime):
 
 @api_bp_v1.route("/client_version")
 def client_version():
+    client_latest = _load_info_json()["client_latest_version"]
     return jsonify(
-        major=CLIENT_LATEST[0], minor=CLIENT_LATEST[1], patch=CLIENT_LATEST[2]
+        major=client_latest["major"],
+        minor=client_latest["minor"],
+        patch=client_latest["patch"],
     )
 
 
 @api_bp_v1.route("/platina_songs")
 def api_platina_songs():
     # cache check
-    cache_response = check_cache_headers(SONGS_DB_LAST_UPDATED)
+    songs_db_last_updated = datetime.fromisoformat(
+        _load_info_json()["songs_db_last_updated"]
+    )
+    cache_response = check_cache_headers(songs_db_last_updated)
     if cache_response:
         return cache_response
 
@@ -59,7 +70,7 @@ def api_platina_songs():
             }
         )
     response = jsonify(songs_json)
-    last_modified_str = SONGS_DB_LAST_UPDATED.isoformat()
+    last_modified_str = songs_db_last_updated.isoformat()
     response.headers["Last-Modified"] = last_modified_str
     return response
 
@@ -67,7 +78,8 @@ def api_platina_songs():
 @api_bp_v1.route("/platina_patterns")
 def api_platina_patterns():
     # cache check
-    cache_response = check_cache_headers(PATTERNS_DB_LAST_UPDATED)
+    patterns_db_last_updated = _load_info_json()["patterns_db_last_updated"]
+    cache_response = check_cache_headers(patterns_db_last_updated)
     if cache_response:
         return cache_response
     patterns = PlatinaPattern.get_all()
@@ -83,7 +95,7 @@ def api_platina_patterns():
             }
         )
     response = jsonify(patterns_json)
-    last_modified_str = PATTERNS_DB_LAST_UPDATED.isoformat()
+    last_modified_str = patterns_db_last_updated.isoformat()
     response.headers["Last-Modified"] = last_modified_str
     return response
 
