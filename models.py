@@ -64,6 +64,20 @@ class DecoderProgress(db.Model):
             .order_by(desc(cls.recorded_at))
         ).scalar()
 
+    @staticmethod
+    def get_all_progresses(decoder: str, line: str) -> list[DecoderProgress]:
+        return (
+            db.session.execute(
+                select(DecoderProgress)
+                .filter(
+                    DecoderProgress.decoder == decoder, DecoderProgress.line == line
+                )
+                .order_by(DecoderProgress.recorded_at)
+            )
+            .scalars()
+            .all()
+        )
+
 
 class DecoderStatus(TypedDict):
     decoder: str

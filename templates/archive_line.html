@@ -3,12 +3,41 @@
 {{ current_user.name }}님의 성과표 {{ line }} | {{ title }}
 {% endblock %}
 
+{% block script %}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const colorMap = {
+            '4L': '#26C795',
+            '4L+': '#368C91',
+            '6L': '#7E72FA',
+            '6L+': '#6262C4'
+        }
+        const ctx = document.getElementById('decoder-progress-chart')
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels }},
+                datasets: [{
+                    label: '{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50',
+                    data: {{ data }},
+                    fill: false,
+                    borderColor: colorMap['{{ line }}'],
+                    tension: 0
+                }]
+            }
+        })
+    </script>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
     <h3 class="text-center mb-4">{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50</h3>
     <h4 class="text-center mb-4">{{ emblem | upper }} ({{ "{:,}".format(total_patch) }})</h4>
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
+            <div>
+                <canvas id="decoder-progress-chart"></canvas>
+            </div>
             <table class="table table-hover">
                 <thead class="table-dark">
                     <tr>
