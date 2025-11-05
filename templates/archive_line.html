@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-{{ current_user.name }}님의 성과표 {{ line }} | {{ title }}
+    {{ current_user.name }}님의 성과표 {{ line }} | {{ title }}
 {% endblock %}
 
 {% block script %}
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const colorMap = {
             '4L': '#26C795',
@@ -12,34 +12,36 @@
             '6L': '#7E72FA',
             '6L+': '#6262C4'
         }
-        const ctx = document.getElementById('decoder-progress-chart')
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ labels | tojson }},
-                datasets: [{
-                    label: '{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50',
-                    data: {{ data | tojson }},
-                    fill: false,
-                    borderColor: colorMap['{{ line }}'],
-                    tension: 0
-                }]
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('decoder-progress-chart')
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{ labels | tojson }},
+                    datasets: [{
+                        label: '{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50',
+                        data: {{ data | tojson }},
+                        fill: false,
+                        borderColor: colorMap['{{ line }}'],
+                        tension: 0
+                    }]
+                }
+            })
         })
     </script>
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h3 class="text-center mb-4">{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50</h3>
-    <h4 class="text-center mb-4">{{ emblem | upper }} ({{ "{:,}".format(total_patch) }})</h4>
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div>
-                <canvas id="decoder-progress-chart"></canvas>
-            </div>
-            <table class="table table-hover">
-                <thead class="table-dark">
+    <div class="container my-5">
+        <h3 class="text-center mb-4">{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50</h3>
+        <h4 class="text-center mb-4">{{ emblem | upper }} ({{ "{:,}".format(total_patch) }})</h4>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div>
+                    <canvas id="decoder-progress-chart"></canvas>
+                </div>
+                <table class="table table-hover">
+                    <thead class="table-dark">
                     <tr>
                         <th scope="col" style="white-space: nowrap;">순위</th>
                         <th scope="col">재킷</th>
@@ -48,39 +50,40 @@
                         <th scope="col">판정</th>
                         <th scope="col">P.A.T.C.H.</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% for result in results %}
-                    <tr>
-                        <td>
-                            {{ loop.index }}
-                        </td>
-                        <td style="width: 100px;">
-                            {% if result.difficulty == "PLUS" %}
-                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png"
-                                alt="Album Jacket" class="img-fluid" style="max-height: 80px; width: auto;">
-                            {% else %}
-                            <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png" alt="Album Jacket"
-                                class="img-fluid" style="max-height: 80px; width: auto;">
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ result.song.title }}
-                        </td>
-                        <td>
-                            Lv.{{ result.level }}
-                        </td>
-                        <td>
-                            {{ _format_judge_str(result) | safe }}
-                        </td>
-                        <td>
-                            {{ result.patch }}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                {{ loop.index }}
+                            </td>
+                            <td style="width: 100px;">
+                                {% if result.difficulty == "PLUS" %}
+                                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}_plus.png"
+                                         alt="Album Jacket" class="img-fluid" style="max-height: 80px; width: auto;">
+                                {% else %}
+                                    <img src="https://r2.platina-archive.app/{{ result.song.song_id }}.png"
+                                         alt="Album Jacket"
+                                         class="img-fluid" style="max-height: 80px; width: auto;">
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ result.song.title }}
+                            </td>
+                            <td>
+                                Lv.{{ result.level }}
+                            </td>
+                            <td>
+                                {{ _format_judge_str(result) | safe }}
+                            </td>
+                            <td>
+                                {{ result.patch }}
+                            </td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
