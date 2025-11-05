@@ -35,6 +35,22 @@ type DecoderEmblem = Literal[
     "Yotta",
 ]  # These names are from SI byte units
 
+emblem_map = {
+    0: "bit",
+    5000: "nibble",
+    10000: "byte",
+    15000: "deca",
+    20000: "hecto",
+    25000: "kilo",
+    30000: "mega",
+    35000: "giga",
+    40000: "tera",
+    45000: "peta",
+    50000: "exa",
+    55000: "zeta",
+    60000: "yotta",
+}
+
 
 class Base(DeclarativeBase):
     pass

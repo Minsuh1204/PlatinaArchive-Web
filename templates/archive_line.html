@@ -5,27 +5,52 @@
 
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
     <script>
         const colorMap = {
             '4L': '#26C795',
             '4L+': '#368C91',
             '6L': '#7E72FA',
             '6L+': '#6262C4'
-        }
+        };
         document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('decoder-progress-chart')
+            const ctx = document.getElementById('decoder-progress-chart');
+            const annotations = {
+                {% for l in annotated_lines %}
+                    line_{{ l[0] }}: { // Use value as key for clarity
+                        type: 'line',
+                        yMin: {{ l[0] }},
+                        yMax: {{ l[0] }},
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 2,
+                        label: {
+                            content: {{ l[1] | upper }},
+                            enabled: true,
+                            position: 'end'
+                        }
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            }
+            const options = {
+                plugins: {
+                    annotation: {
+                        annotations: annotations
+                    }
+                }
+            };
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: {{ labels | tojson }},
                     datasets: [{
-                        label: '{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50',
+                        label: '{{ line }} Top 50',
                         data: {{ data | tojson }},
                         fill: false,
                         borderColor: colorMap['{{ line }}'],
                         tension: 0
                     }]
-                }
+                },
+                options
             })
         })
     </script>

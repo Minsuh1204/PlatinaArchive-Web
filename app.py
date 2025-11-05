@@ -28,7 +28,7 @@ from flask_jwt_extended import (
 from sqlalchemy import desc, select
 
 from api.routes import api_bp_v1, _load_info_json
-from models import Decoder, DecodeResult, PlatinaSong, db, DecoderProgress
+from models import Decoder, DecodeResult, PlatinaSong, db, DecoderProgress, emblem_map
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
@@ -269,9 +269,15 @@ def get_archive_by_line(line: str):
     )
     labels = [p.recorded_at.date().isoformat() for p in progresses]
     data = [round(p.total, 2) for p in progresses]
+    annotated_lines = []
+    min_line = ((min(data) - 500) // 5000) * 5000
+    max_line = ((max(data) + 500) // 5000) * 5000
+    for i in range(min_line, max_line + 5000, 5000):
+        annotated_lines.append((i, emblem_map[i]))
     total_patch, emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
     return render_template(
         "archive_line.html",
+        annotated_lines=annotated_lines,
         labels=labels,
         data=data,
         progresses=progresses,
