@@ -297,7 +297,7 @@ def song_autocomplete():
 
 
 @app.route("/search")
-@jwt_required()
+@jwt_required(optional=True)
 def search():
     query = request.args.get("query", "").strip()
     update_song_titles_cache()
