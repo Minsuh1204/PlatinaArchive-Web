@@ -16,10 +16,10 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ labels }},
+                labels: {{ labels | tojson }},
                 datasets: [{
                     label: '{{ current_user.name }}님의 {{ line }} P.A.T.C.H. Top 50',
-                    data: {{ data }},
+                    data: {{ data | tojson }},
                     fill: false,
                     borderColor: colorMap['{{ line }}'],
                     tension: 0
