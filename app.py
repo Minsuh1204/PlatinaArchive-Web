@@ -1,34 +1,19 @@
 import os
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from functools import lru_cache
 
 import redis
 from dotenv import load_dotenv
-from flask import (
-    Flask,
-    abort,
-    flash,
-    jsonify,
-    make_response,
-    redirect,
-    render_template,
-    request,
-    send_file,
-    url_for,
-)
-from flask_jwt_extended import (
-    JWTManager,
-    create_access_token,
-    current_user,
-    get_jwt,
-    jwt_required,
-    set_access_cookies,
-    unset_jwt_cookies,
-)
+from flask import (Flask, abort, flash, jsonify, make_response, redirect,
+                   render_template, request, send_file, url_for)
+from flask_jwt_extended import (JWTManager, create_access_token, current_user,
+                                get_jwt, jwt_required, set_access_cookies,
+                                unset_jwt_cookies)
 from sqlalchemy import desc, select
 
-from api.routes import api_bp_v1, _load_info_json
-from models import Decoder, DecodeResult, PlatinaSong, db, DecoderProgress, emblem_map
+from api.routes import _load_info_json, api_bp_v1
+from models import (Decoder, DecodeResult, DecoderProgress, PlatinaSong, db,
+                    emblem_map)
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(BASEDIR)
@@ -270,8 +255,8 @@ def get_archive_by_line(line: str):
     labels = [p.recorded_at.date().isoformat() for p in progresses]
     data = [round(p.total, 2) for p in progresses]
     annotated_lines = []
-    min_line = ((min(data) - 500) // 5000) * 5000
-    max_line = ((max(data) + 500) // 5000) * 5000
+    min_line = ((min(data) - 500) // 5000 + 1) * 5000
+    max_line = ((max(data) + 500) // 5000 + 1) * 5000
     for i in range(int(min_line), int(max_line) + 5000, 5000):
         annotated_lines.append((i, emblem_map[i]))
     total_patch, emblem = decoder.calculate_emblem(line_int, line.endswith("+"))

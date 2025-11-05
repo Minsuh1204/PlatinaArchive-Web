@@ -1,6 +1,6 @@
+import json
 import os
 from datetime import datetime, timezone
-import json
 
 from flask import Blueprint, jsonify, make_response, request
 
