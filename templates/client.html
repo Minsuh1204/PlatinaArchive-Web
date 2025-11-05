@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}
-    {{ title }} 클라이언트
+    클라이언트 | {{ title }}
+{% endblock %}
+{% block og-title %}
+	<meta property="og:title" content="클라이언트 | {{ title }}" />
 {% endblock %}
 {% block content %}
     <div class="container my-5">

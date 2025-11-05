@@ -62,6 +62,16 @@
             /* Limit search bar width */
         }
     </style>
+    {% block og-title %}
+    	<meta property="og:title" content="{{ title }}">
+    {% endblock %}
+    {% block og-image %}
+    	<meta property="og:image" content="{{ url_for('static', filename='favicon.png') }}">
+    {% endblock %}
+    {% block og-basic %}
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="PLATiNA::LAB의 성과를 저장, 분석할 수 있는 웹사이트">
+    {% endblock %}
 </head>
 
 <body>

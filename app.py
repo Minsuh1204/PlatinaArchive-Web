@@ -311,12 +311,18 @@ def search():
 
 
 @app.route("/songs/<int:song_id>")
-@jwt_required()
+@jwt_required(optional=True)
 def get_song(song_id: int):
     song_data = PlatinaSong.from_song_id(song_id)
     if not song_data:
         abort(404)
-    results: list[DecodeResult] = song_data.decode_results
+    all_results: list[DecodeResult] = song_data.decode_results
+    if current_user:
+        results: list[DecodeResult] = [
+            r for r in all_results if r.decoder == current_user.name
+        ]
+    else:
+        results = []
     results_4l_easy = "N/A"
     results_4l_hard = "N/A"
     results_4l_over = "N/A"

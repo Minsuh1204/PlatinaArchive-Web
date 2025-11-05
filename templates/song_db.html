@@ -2,6 +2,12 @@
 {% block title %}
 {{ song.title }} 정보 | {{ title }}
 {% endblock %}
+{% block og-title %}
+	<meta property="og:title" content="{{ song.title }} 정보 | {{ title }}">s
+{% endblock %}
+{% block og-image %}
+	<meta property="og:image" content="https://r2.platina-archive.app/{{ song.song_id }}.png">
+{% endblock %}
 {% block content %}
 <div class="container my-5">
     <h3 class="text-center mb-4">{{ song.title }}</h3>
