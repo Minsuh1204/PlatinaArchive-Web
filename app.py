@@ -272,7 +272,7 @@ def get_archive_by_line(line: str):
     annotated_lines = []
     min_line = ((min(data) - 500) // 5000) * 5000
     max_line = ((max(data) + 500) // 5000) * 5000
-    for i in range(min_line, max_line + 5000, 5000):
+    for i in range(int(min_line), int(max_line) + 5000, 5000):
         annotated_lines.append((i, emblem_map[i]))
     total_patch, emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
     return render_template(
