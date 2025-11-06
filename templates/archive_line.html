@@ -6,18 +6,28 @@
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        function utcToLocalDate(utc) {
+            let utcDate = new Date(utc);
+            let year = utcDate.getFullYear().toString().slice(-2);
+            let month = (utcDate.getMonth() + 1).toString().padStart(2, '0');
+            let day = utcDate.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         const colorMap = {
             '4L': '#26C795',
             '4L+': '#368C91',
             '6L': '#7E72FA',
             '6L+': '#6262C4'
         };
+        let dates = {{ dates | tojson }};
+        dates.forEach(utcToLocalDate);
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('decoder-progress-chart');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: {{ labels | tojson }},
+                    labels: dates,
                     datasets: [{
                         label: '{{ line }} Top 50',
                         data: {{ data | tojson }},

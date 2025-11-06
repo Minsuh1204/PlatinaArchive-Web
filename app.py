@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
 import redis
@@ -267,12 +267,12 @@ def get_archive_by_line(line: str):
     progresses: list[DecoderProgress] = DecoderProgress.get_all_progresses(
         current_user.name, line
     )
-    labels = [p.recorded_at.date().isoformat() for p in progresses]
+    dates = [p.recorded_at.astimezone(timezone.utc).isoformat() for p in progresses]
     data = [round(p.total, 2) for p in progresses]
     total_patch, emblem = decoder.calculate_emblem(line_int, line.endswith("+"))
     return render_template(
         "archive_line.html",
-        labels=labels,
+        dates=dates,
         data=data,
         progresses=progresses,
         results=top_50_patch_results,
