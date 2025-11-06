@@ -21,13 +21,17 @@
             '6L+': '#6262C4'
         };
         let dates = {{ dates | tojson }};
+        let formattedDates = [];
+        for (const d of dates) {
+            formattedDates.push(utcToLocalDate(d));
+        }
         dates.forEach(utcToLocalDate);
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('decoder-progress-chart');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dates,
+                    labels: formattedDates,
                     datasets: [{
                         label: '{{ line }} Top 50',
                         data: {{ data | tojson }},
