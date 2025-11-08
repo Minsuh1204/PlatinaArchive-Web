@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 from datetime import datetime, timezone
@@ -8,6 +9,7 @@ from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
 
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
+api_bp_v2 = Blueprint("api_v2", __name__, url_prefix="/api/v2")
 
 os.chdir(BASEDIR)
 
@@ -118,10 +120,7 @@ def register_decoder():
     return jsonify(success_json)
 
 
-@api_bp_v1.route("/update_archive", methods=["POST"])
-def update_archive():
-    params = request.get_json()
-    api_key = request.headers.get("X-API-Key", "::")
+def _update_db_archive(params, api_key: str):
     song_id = params.get("song_id")
     line = params.get("line")
     difficulty = params.get("difficulty")
@@ -180,9 +179,27 @@ def update_archive():
         return jsonify({"msg": "failed"}), 500
 
 
-@api_bp_v1.route("/get_archive", methods=["POST"])
-def get_archive():
+@api_bp_v1.route("/update_archive", methods=["POST"])
+def update_archive():
+    params = request.get_json()
     api_key = request.headers.get("X-API-Key", "::")
+    return _update_db_archive(params, api_key)
+
+
+@api_bp_v2.route("/update_archive", methods=["POST"])
+def update_archive_v2():
+    params = request.get_json()
+    b64_api_key = request.headers.get("X-API-Key")
+    if not b64_api_key:
+        return jsonify({"msg": "No API key"}), 401
+    try:
+        api_key = base64.b64decode(b64_api_key.encode("utf-8")).decode("utf-8")
+    except UnicodeDecodeError:
+        return jsonify({"msg": "API key is not encoded correctly"}), 400
+    return _update_db_archive(params, api_key)
+
+
+def _get_archive(api_key: str):
     decoder: Decoder | None = Decoder.load_by_key(api_key)
     if not decoder:
         msg = {"msg": "Invalid API key"}
@@ -206,6 +223,24 @@ def get_archive():
             }
         )
     return jsonify(json_archive)
+
+
+@api_bp_v1.route("/get_archive", methods=["POST"])
+def get_archive():
+    api_key = request.headers.get("X-API-Key", "::")
+    return _get_archive(api_key)
+
+
+@api_bp_v2.route("/get_archive", methods=["POST"])
+def get_archive_v2():
+    b64_api_key = request.headers.get("X-API-Key")
+    if not b64_api_key:
+        return jsonify({"msg": "No API key"}), 401
+    try:
+        api_key = base64.b64decode(b64_api_key.encode("utf-8")).decode("utf-8")
+        return _get_archive(api_key)
+    except UnicodeDecodeError:
+        return jsonify({"msg": "API key is not encoded correctly"}), 400
 
 
 @api_bp_v1.route("/login", methods=["POST"])

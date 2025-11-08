@@ -27,7 +27,7 @@ from flask_jwt_extended import (
 )
 from sqlalchemy import desc, select
 
-from api.routes import _load_info_json, api_bp_v1
+from api.routes import _load_info_json, api_bp_v1, api_bp_v2
 from models import Decoder, DecodeResult, DecoderProgress, PlatinaSong, db, emblem_map
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 5, 0)
+VERSION = (1, 5, 1)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
@@ -61,6 +61,7 @@ app.config["JWT_COOKIE_SECURE"] = True
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 app.register_blueprint(api_bp_v1)
+app.register_blueprint(api_bp_v2)
 
 db.init_app(app)
 jwt = JWTManager(app, add_context_processor=True)  # We can use current_user in jinja!!
