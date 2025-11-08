@@ -245,9 +245,9 @@ def get_archive_v2():
 
 @api_bp_v1.route("/login", methods=["POST"])
 def login():
-    json = request.get_json()
-    name = json.get("name", "")
-    password = json.get("password", "")
+    request_json = request.get_json()
+    name = request_json.get("name", "")
+    password = request_json.get("password", "")
     decoder: Decoder = db.session.get(Decoder, name)
     if not decoder or not decoder.check_pass(password):
         return jsonify(msg="로그인 실패"), 401
