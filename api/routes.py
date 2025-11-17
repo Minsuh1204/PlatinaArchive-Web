@@ -1,3 +1,4 @@
+import binascii
 import base64
 import json
 import os
@@ -239,7 +240,7 @@ def get_archive_v2():
     try:
         api_key = base64.b64decode(b64_api_key.encode("utf-8")).decode("utf-8")
         return _get_archive(api_key)
-    except UnicodeDecodeError:
+    except (UnicodeDecodeError, binascii.Error):
         return jsonify({"msg": "API key is not encoded correctly"}), 400
 
 

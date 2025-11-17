@@ -36,7 +36,7 @@ load_dotenv()
 
 lines = ["4L", "4L+", "6L", "6L+"]
 
-VERSION = (1, 5, 1)
+VERSION = (1, 5, 2)
 ENDPOINTS_MAP: dict[str, str] = {
     "/": "homepage",
     "/login": "login",
