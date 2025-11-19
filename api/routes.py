@@ -195,7 +195,7 @@ def update_archive_v2():
         return jsonify({"msg": "No API key"}), 401
     try:
         api_key = base64.b64decode(b64_api_key.encode("utf-8")).decode("utf-8")
-    except UnicodeDecodeError:
+    except (UnicodeDecodeError, binascii.Error):
         return jsonify({"msg": "API key is not encoded correctly"}), 400
     return _update_db_archive(params, api_key)
 
