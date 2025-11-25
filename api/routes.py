@@ -25,8 +25,7 @@ def _load_info_json() -> dict:
 
 def check_cache_headers(db_last_modified: datetime):
     db_last_modified_str = db_last_modified.isoformat()
-    if_modified_since = request.headers.get("If-Modified-Since", "test")
-    return if_modified_since
+    if_modified_since = request.headers.get("If-Modified-Since")
 
     if if_modified_since:
         try:
