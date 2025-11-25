@@ -1,0 +1,48 @@
+version: 2025-11-24
+
+reference:
+  width: 1920
+  height: 1080
+
+speedWidgetPHash: c0c73d38273ed2c3
+
+configs:
+  - screenSize: 1920x1080
+    select:
+      speedWidget: [30, 908, 119, 932] # to determine if the screen is in select mode
+      jacket: [760, 66, 1160, 466]
+      majorJudge: [979, 846, 1015, 865]
+      minorJudge: [1019, 848, 1059, 865]
+      line: [143, 32, 361, 78]
+      majorPatch: [891, 741, 1026, 786]
+      minorPatch: [1032, 752, 1078, 786]
+      score: [961, 803, 1078, 826]
+      fullCombo: [1109, 867, 1320, 900]
+      maxPatch: [1033, 726]
+      rank: [1151, 684, 1280, 812]
+
+    result:
+      jacket: [122, 193, 522, 593]
+      judge: [959, 301, 1283, 367]
+      line: [37, 32, 75, 81]
+      level: [395, 700, 502, 762]
+      patch: [979, 186, 1320, 251]
+      score: [953, 418, 1316, 483]
+      rank: [1020, 575, 1345, 890]
+      notesArea: [874, 0, 950, 0] # placeholder for common X
+      # notes Y coordinates (start, end)
+      totalNotes: [589, 614]
+      perfectHigh: [650, 675]
+      perfect: [686, 713]
+      great: [725, 751]
+      good: [764, 788]
+      miss: [800, 828]
+      difficulty: [300, 730]
+
+difficultyColors: # RGB
+  easy: [254, 179, 26]
+  hard: [252, 109, 111]
+  over: [187, 99, 219]
+  plus: [69, 81, 141]
+
+colorTolerance: 5

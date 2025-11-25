@@ -4,6 +4,7 @@ import json
 import os
 from datetime import datetime, timezone
 
+from ruamel.yaml import YAML
 from flask import Blueprint, jsonify, make_response, request
 
 from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, db
@@ -12,6 +13,7 @@ BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
 api_bp_v2 = Blueprint("api_v2", __name__, url_prefix="/api/v2")
 
+yaml = YAML(pure=True)
 os.chdir(BASEDIR)
 
 
@@ -23,7 +25,8 @@ def _load_info_json() -> dict:
 
 def check_cache_headers(db_last_modified: datetime):
     db_last_modified_str = db_last_modified.isoformat()
-    if_modified_since = request.headers.get("If-Modified-Since")
+    if_modified_since = request.headers.get("If-Modified-Since", "test")
+    return if_modified_since
 
     if if_modified_since:
         try:
@@ -34,7 +37,7 @@ def check_cache_headers(db_last_modified: datetime):
                 response = make_response("", 304)
                 response.headers["Last-Modified"] = db_last_modified_str
                 return response
-        except ValueError:
+        except ValueError as e:
             pass
 
     return None
@@ -49,6 +52,20 @@ def client_version():
         patch=client_latest["patch"],
     )
 
+@api_bp_v1.route("/config")
+def config():
+    # cache check
+    config_db_last_updated = datetime.fromisoformat(
+        _load_info_json()["config_last_updated"]
+    )
+    cache_response = check_cache_headers(config_db_last_updated)
+    if cache_response:
+        return cache_response
+    with open("./config.yaml") as f:
+        config_dict = yaml.load(f)
+    if "version" in config_dict and hasattr(config_dict["version"], "strftime"):
+        config_dict["version"] = config_dict["version"].strftime("%Y-%m-%d")
+    return jsonify(config_dict)
 
 @api_bp_v1.route("/platina_songs")
 def api_platina_songs():
