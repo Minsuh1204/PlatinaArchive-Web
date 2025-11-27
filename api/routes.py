@@ -96,6 +96,36 @@ def api_platina_songs():
     return response
 
 
+@api_bp_v2.route("/platina_songs")
+def api_platina_songs_v2():
+    # cache check
+    songs_db_last_updated = datetime.fromisoformat(
+        _load_info_json()["songs_db_last_updated"]
+    )
+    cache_response = check_cache_headers(songs_db_last_updated)
+    if cache_response:
+        return cache_response
+
+    songs = PlatinaSongGo.get_all()
+    songs_json = []
+    for song in songs:
+        songs_json.append(
+            {
+                "songID": song.song_id,
+                "title": song.title,
+                "artist": song.artist,
+                "BPM": song.bpm,
+                "DLC": song.dlc,
+                "pHash": song.phash,
+                "plusPHash": song.plus_phash,
+            }
+        )
+    response = jsonify(songs_json)
+    last_modified_str = songs_db_last_updated.isoformat()
+    response.headers["Last-Modified"] = last_modified_str
+    return response
+
+
 @api_bp_v1.route("/platina_patterns")
 def api_platina_patterns():
     # cache check

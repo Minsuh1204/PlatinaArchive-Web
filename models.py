@@ -10,6 +10,7 @@ from typing import Literal, TypedDict
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, desc, func, select
+from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -104,6 +105,24 @@ class DecoderStatus(TypedDict):
     full_combo_patterns: int
     perfect_decode_patterns: int
     max_patch_patterns: int
+
+
+class PlatinaSongGo(db.Model):
+    __tablename__ = "PlatinaSongsGo"
+
+    song_id: Mapped[int] = mapped_column("songID", autoincrement=True, primary_key=True)
+    title: Mapped[str] = mapped_column("title")
+    artist: Mapped[str] = mapped_column("artist")
+    bpm: Mapped[str] = mapped_column("BPM")
+    dlc: Mapped[str] = mapped_column("DLC")
+    phash: Mapped[int] = mapped_column("pHash", BIGINT(unsigned=True))
+    plus_phash: Mapped[int] = mapped_column("plusPHash", BIGINT(unsigned=True))
+    # relations
+    patterns: Mapped[list[PlatinaPattern]] = relationship(back_populates="song")
+
+    @staticmethod
+    def get_all() -> list[PlatinaSongGo]:
+        return db.session.execute(db.select(PlatinaSongGo)).scalars().all()
 
 
 class PlatinaSong(db.Model):
