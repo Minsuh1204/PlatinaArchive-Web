@@ -117,8 +117,6 @@ class PlatinaSongGo(db.Model):
     dlc: Mapped[str] = mapped_column("DLC")
     phash: Mapped[int] = mapped_column("pHash", BIGINT(unsigned=True))
     plus_phash: Mapped[int] = mapped_column("plusPHash", BIGINT(unsigned=True))
-    # relations
-    patterns: Mapped[list[PlatinaPattern]] = relationship(back_populates="song")
 
     @staticmethod
     def get_all() -> list[PlatinaSongGo]:
