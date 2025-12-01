@@ -59,6 +59,12 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
+class TokenBlocklist(db.Model):
+    __tablename__ = "TokenBlocklist"
+    id: Mapped[int] = mapped_column("id", primary_key=True)
+    jti: Mapped[str] = mapped_column("jti")
+    created_at: Mapped[datetime] = mapped_column("created_at", nullable=False)
+
 
 class DecoderProgress(db.Model):
     __tablename__ = "DecoderProgress"

@@ -66,14 +66,6 @@ app.register_blueprint(api_bp_v2)
 db.init_app(app)
 jwt = JWTManager(app, add_context_processor=True)  # We can use current_user in jinja!!
 
-jwt_redis_blocklist = redis.StrictRedis(
-    host=os.getenv("REDIS_HOST"),
-    port=11809,
-    decode_responses=True,
-    username=os.getenv("REDIS_USERNAME"),
-    password=os.getenv("REDIS_PASS"),
-)
-
 
 @app.context_processor
 def inject_global_variables():
@@ -83,8 +75,8 @@ def inject_global_variables():
 @jwt.token_in_blocklist_loader
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     jti = jwt_payload["jti"]
-    token_in_redis = jwt_redis_blocklist.get(jti)
-    return token_in_redis is not None
+    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    return token is not None
 
 
 @jwt.user_identity_loader
@@ -176,7 +168,9 @@ def login():
 @jwt_required()
 def logout():
     jti = get_jwt()["jti"]
-    jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
+    now = datetime.now(timezone.utc)
+    db.session.add(TokenBlocklist(jti=jti, created_at=now))
+    db.session.commit()
     response = make_response(redirect("/"))
     unset_jwt_cookies(response)
     flash("성공적으로 로그아웃 되었습니다.", "info")
