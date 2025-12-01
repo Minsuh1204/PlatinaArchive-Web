@@ -1,13 +1,14 @@
-import binascii
 import base64
+import binascii
 import json
 import os
 from datetime import datetime, timezone
 
-from ruamel.yaml import YAML
 from flask import Blueprint, jsonify, make_response, request
+from ruamel.yaml import YAML
 
-from models import Decoder, DecodeResult, PlatinaPattern, PlatinaSong, PlatinaSongGo, db
+from models import (Decoder, DecodeResult, PlatinaPattern, PlatinaSong,
+                    PlatinaSongGo, db)
 
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 api_bp_v1 = Blueprint("api", __name__, url_prefix="/api/v1")
